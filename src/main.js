@@ -31,11 +31,13 @@ import { renderSustainabilityPage } from "./pages/Sustainability.js";
 import { renderProfilePage } from "./pages/Profile.js";
 import { renderLoginPage } from "./pages/Login.js";
 import { renderRegisterPage } from "./pages/Register.js";
+import { renderIntelligencePage } from "./pages/Intelligence.js";
 
 // Services
 import { classifyAgriWasteImage, getAIAssistantResponse } from "./services/aiService.js";
 import { initializeMap, addListingMarkers } from "./services/mapService.js";
 import { exportToCSV, printTaxInvoice } from "./services/exportService.js";
+import { calculateQualityScore, calculateSuitabilityScore, estimateWasteValue, calculateEnvironmentalImpact, determineRecommendedApplications } from "./lib/server/wasteIntelligence.ts";
 
 class App {
   constructor() {
@@ -83,6 +85,8 @@ class App {
       pageHtml = renderHomePage();
     } else if (path === "/marketplace") {
       pageHtml = renderMarketplacePage(params);
+    } else if (path.startsWith("/intelligence")) {
+      pageHtml = renderIntelligencePage(params);
     } else if (path.startsWith("/waste/")) {
       const listingId = path.split("/waste/")[1];
       pageHtml = renderWasteDetailsPage(listingId);
@@ -520,6 +524,12 @@ class App {
         const pincode = document.getElementById("input-listing-pincode")?.value;
         const desc = document.getElementById("input-listing-desc")?.value;
 
+        // Advanced optional fields
+        const harvest_age = document.getElementById("input-listing-age")?.value;
+        const contamination_level = document.getElementById("input-listing-contamination")?.value;
+        const processing_level = document.getElementById("input-listing-processing")?.value;
+        const intended_use = document.getElementById("input-listing-intended-use")?.value;
+
         const newListing = store.createListing({
           title,
           category,
@@ -528,6 +538,10 @@ class App {
           price,
           moisture,
           qualityGrade: grade,
+          harvest_age,
+          contamination_level,
+          processing_level,
+          intended_use,
           packaging: pkg,
           loadingAssistance: loading,
           storageType: storage,
@@ -539,6 +553,74 @@ class App {
 
         showToast("Your agricultural waste listing has been published!", "success");
         window.location.hash = `#waste/${newListing.id}`;
+      });
+    }
+
+    // 9.5 Intelligence Tab Navigation & Interactive Calculator
+    document.querySelectorAll(".btn-intel-tab").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const tab = btn.dataset.tab;
+        const { path, params } = this.parseHash();
+        params.tab = tab;
+        const qs = new URLSearchParams(params).toString();
+        window.location.hash = `#intelligence?${qs}`;
+      });
+    });
+
+    const intelSearchBtn = document.getElementById("btn-intel-search");
+    const intelSearchInput = document.getElementById("intel-search-input");
+    if (intelSearchBtn && intelSearchInput) {
+      intelSearchBtn.addEventListener("click", () => {
+        const q = encodeURIComponent(intelSearchInput.value.trim());
+        const { path, params } = this.parseHash();
+        params.search = q;
+        const qs = new URLSearchParams(params).toString();
+        window.location.hash = `#intelligence?${qs}`;
+      });
+    }
+
+    const calcForm = document.getElementById("calc-intel-form");
+    if (calcForm) {
+      calcForm.addEventListener("submit", e => {
+        e.preventDefault();
+        const cat = document.getElementById("calc-cat")?.value || "paddy-straw";
+        const qty = parseFloat(document.getElementById("calc-qty")?.value) || 15;
+        const moisture = document.getElementById("calc-moisture")?.value || "12%";
+        const contamination = document.getElementById("calc-contamination")?.value || "Low";
+        const age = document.getElementById("calc-age")?.value || 5;
+        const storage = document.getElementById("calc-storage")?.value || "Covered Shed";
+        const price = parseFloat(document.getElementById("calc-price")?.value) || 2500;
+
+        const sample = {
+          category: cat,
+          quantity: qty,
+          moisture,
+          contamination_level: contamination,
+          harvest_age: age,
+          storage_condition: storage,
+          price
+        };
+
+        const qRes = calculateQualityScore(sample);
+        const wssRes = calculateSuitabilityScore(sample);
+        const valRes = estimateWasteValue(sample);
+        const envRes = calculateEnvironmentalImpact(qty, cat);
+        const recApps = determineRecommendedApplications(sample);
+
+        const outBox = document.getElementById("calc-results-output");
+        if (outBox) {
+          outBox.classList.remove("hidden");
+          document.getElementById("res-quality-score").innerText = `${qRes.score}/100`;
+          document.getElementById("res-quality-grade").innerText = `Grade: ${qRes.grade}`;
+          document.getElementById("res-wss-score").innerText = `${wssRes.wssScore}/100`;
+          document.getElementById("res-wss-label").innerText = wssRes.categoryLabel;
+          document.getElementById("res-value-uplift").innerText = `+${valRes.roiIncreasePercent}% Uplift`;
+          document.getElementById("res-recommended-app").innerText = recApps[0]?.application_name || "Composting";
+
+          document.getElementById("res-quality-explanation").innerHTML = `<strong>Quality Formula Breakdown:</strong> ${qRes.explanation}`;
+          document.getElementById("res-wss-explanation").innerHTML = `<strong>Suitability Score (WSS):</strong> ${wssRes.explanation}`;
+          document.getElementById("res-env-explanation").innerHTML = `<strong>Environmental CO₂ Avoided:</strong> ${envRes.explanation}`;
+        }
       });
     }
 

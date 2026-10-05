@@ -130,44 +130,62 @@ export function renderBuyerDashboardPage(activeSubtab = "overview") {
 
         <!-- AI Smart Recommended Waste Feed for this Buyer -->
         <div style="background:#ffffff; border:1px solid #e2ece2; border-radius:18px; padding:24px; box-shadow:0 2px 10px rgba(15,61,33,0.04);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
             <div>
               <div style="display:flex; align-items:center; gap:8px;">
-                <span style="font-size:18px;">✨</span>
-                <h3 style="font-family:'Outfit', sans-serif; font-size:18px; font-weight:700; color:#0f172a; margin:0;">
-                  Smart AI Feed: Matched for ${currentUser.industry || "Your Plant"}
+                <span style="font-size:20px;">🧠</span>
+                <h3 style="font-family:'Outfit', sans-serif; font-size:18px; font-weight:800; color:#0f172a; margin:0;">
+                  AgriWaste Intelligence: Ranked Waste Matches
                 </h3>
               </div>
               <p style="font-size:12px; color:#64748b; margin-top:2px;">
-                Ranked by proximity distance, moisture specifications, and price suitability
+                Ranked for ${currentUser.companyName || currentUser.name} by Buyer Match Score (Waste 30%, Quantity 25%, Quality 20%, Distance 15%, Price 10%)
               </p>
             </div>
-            <a href="#marketplace" style="color:#16a34a; font-size:13px; font-weight:700; text-decoration:none;">Explore all →</a>
+            <a href="#intelligence" style="color:#16a34a; font-size:13px; font-weight:700; text-decoration:none;">Open Full Intelligence Engine →</a>
           </div>
 
-          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:16px;">
-            ${recommendedListings
-              .map(
-                l => `
-              <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
-                <div>
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <span style="background:#f0fdf4; color:#16a34a; font-size:11px; font-weight:800; padding:2px 8px; border-radius:10px;">${l.categoryName}</span>
-                    <span style="background:#dcfce7; color:#15803d; font-size:10px; font-weight:800; padding:2px 6px; border-radius:10px;">${l.matchScore}% Match</span>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
+            ${(() => {
+              const matches = store.getBuyerMatchesForBuyer(currentUser.id);
+              if (matches.length === 0) return `<p style="font-size:13px; color:#64748b;">No active matching waste listings currently available.</p>`;
+
+              return matches.slice(0, 4).map(m => {
+                const listing = store.getListingById(m.waste_id);
+                if (!listing) return '';
+                const intel = store.getListingIntelligence(listing.id);
+
+                return `
+                  <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
+                    <div>
+                      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span style="background:#f0fdf4; color:#16a34a; font-size:11px; font-weight:800; padding:2px 8px; border-radius:10px; border:1px solid #bbf7d0;">${listing.categoryName}</span>
+                        <span style="background:#0f172a; color:#ffffff; font-size:11px; font-weight:800; padding:3px 8px; border-radius:10px;">${m.match_score}% Match</span>
+                      </div>
+                      <h4 style="font-size:15px; font-weight:700; color:#0f172a; margin-bottom:4px; line-height:1.3;">
+                        <a href="#waste/${listing.id}" style="color:inherit; text-decoration:none;">${listing.title}</a>
+                      </h4>
+                      <p style="font-size:12px; color:#64748b; margin:0 0 8px 0;">📍 ${listing.location} (${m.distance_km || 25} km)</p>
+                      
+                      <div style="font-size:11px; color:#334155; background:#ffffff; padding:8px 10px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px; line-height:1.4;">
+                        <strong>Suitability WSS:</strong> ${intel?.suitability?.wssScore || 88}/100<br/>
+                        <strong>Rec Use:</strong> ${intel?.recommendations?.[0]?.application_name || 'Composting'}
+                      </div>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #e2e8f0; padding-top:10px;">
+                      <div>
+                        <span style="font-size:10px; color:#64748b; display:block;">Price per Ton</span>
+                        <strong style="font-size:16px; color:#16a34a;">${formatINR(listing.price)}</strong>
+                      </div>
+                      <div style="display:flex; gap:6px;">
+                        <a href="#waste/${listing.id}" style="background:#16a34a; color:white; padding:7px 14px; border-radius:8px; font-size:12px; font-weight:700; text-decoration:none;">Procure</a>
+                      </div>
+                    </div>
                   </div>
-                  <h4 style="font-size:14px; font-weight:700; color:#0f172a; margin-bottom:6px;">
-                    <a href="#waste/${l.id}" style="color:inherit; text-decoration:none;">${l.title}</a>
-                  </h4>
-                  <p style="font-size:12px; color:#64748b; margin:0 0 10px 0;">📍 ${l.location} (${l.distanceKm} km)</p>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:10px;">
-                  <strong style="font-size:16px; color:#16a34a;">${formatINR(l.price)} / Ton</strong>
-                  <a href="#waste/${l.id}" style="background:#16a34a; color:white; padding:6px 12px; border-radius:6px; font-size:12px; font-weight:700; text-decoration:none;">Buy</a>
-                </div>
-              </div>
-            `
-              )
-              .join("")}
+                `;
+              }).join('');
+            })()}
           </div>
         </div>
 

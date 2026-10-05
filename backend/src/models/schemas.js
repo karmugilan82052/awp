@@ -1,5 +1,5 @@
 /**
- * MongoDB / Relational Schema Definitions for Smart Agri Waste Marketplace
+ * MongoDB / Relational Schema Definitions for Smart Agri Waste Marketplace & Intelligence System
  */
 
 export const UserSchema = {
@@ -44,8 +44,18 @@ export const WasteListingSchema = {
   priceUnit: "String",
   minOrderQty: "Number",
   availableQty: "Number",
+
+  // Extended Advanced Intelligence Fields
   moisture: "String",
+  moisture_level: "String",
   qualityGrade: "String",
+  quality_grade: "String",
+  harvest_age: "String / Number",
+  contamination_level: "String (Low, Medium, High)",
+  storage_condition: "String (Covered Shed, Silo, Baled, Open Air)",
+  processing_level: "String (Raw, Chopped, Baled, Pelletized)",
+  intended_use: "String",
+
   packaging: "String",
   storageType: "String",
   loadingAssistance: "String",
@@ -63,6 +73,52 @@ export const WasteListingSchema = {
   isApproved: "Boolean",
   views: "Number",
   createdAt: "Date"
+};
+
+export const WasteRecommendationSchema = {
+  id: "String (Primary Key)",
+  waste_id: "String (Ref: waste_listings)",
+  application_name: "String",
+  suitability_score: "Number (0-100)",
+  reason: "String",
+  estimated_value: "Number",
+  created_at: "Date"
+};
+
+export const BuyerMatchSchema = {
+  id: "String (Primary Key)",
+  waste_id: "String (Ref: waste_listings)",
+  buyer_id: "String (Ref: users)",
+  match_score: "Number (0-100)",
+  waste_compatibility: "Number",
+  quantity_score: "Number",
+  quality_score: "Number",
+  distance_score: "Number",
+  price_score: "Number",
+  created_at: "Date"
+};
+
+export const AggregatedSupplySchema = {
+  id: "String (Primary Key)",
+  wasteCategory: "String",
+  participatingListingIds: ["String"],
+  totalQuantity: "Number",
+  averageQualityScore: "Number",
+  approximateLocation: "String",
+  buyerId: "String",
+  aggregationScore: "Number",
+  createdAt: "Date"
+};
+
+export const EnvironmentalImpactSchema = {
+  id: "String (Primary Key)",
+  waste_id: "String (Ref: waste_listings)",
+  wasteDivertedKg: "Number",
+  co2AvoidedKg: "Number",
+  methanePreventedKg: "Number",
+  pm25PreventedKg: "Number",
+  treesEquivalent: "Number",
+  created_at: "Date"
 };
 
 export const OrderSchema = {

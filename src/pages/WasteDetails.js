@@ -60,6 +60,71 @@ export function renderWasteDetailsPage(listingId) {
               </div>
             </div>
 
+            <!-- AGRIWASTE INTELLIGENCE ENGINE ANALYSIS BOX -->
+            ${(() => {
+              const intel = store.getListingIntelligence(listing.id);
+              if (!intel) return '';
+              const { quality, suitability, recommendations, buyerMatches, valueOpt, envImpact } = intel;
+              const topApp = recommendations[0];
+              const topBuyer = buyerMatches[0];
+
+              return `
+                <div style="background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius:18px; padding:24px; margin-bottom:24px; color:#ffffff; shadow:0 10px 25px rgba(15,23,42,0.15);">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                      <span style="font-size:24px;">🧠</span>
+                      <div>
+                        <h3 style="font-family:'Outfit', sans-serif; font-size:20px; font-weight:800; margin:0; color:#ffffff;">
+                          AgriWaste Intelligence Matrix
+                        </h3>
+                        <span style="font-size:11px; color:#94a3b8;">Normalized Suitability Scoring & Optimization</span>
+                      </div>
+                    </div>
+                    <span style="background:#10b981; color:#ffffff; font-size:12px; font-weight:800; padding:4px 12px; border-radius:20px;">
+                      WSS: ${suitability.wssScore}/100 • ${suitability.categoryLabel}
+                    </span>
+                  </div>
+
+                  <!-- 4-Stat Grid -->
+                  <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px; margin-bottom:20px;">
+                    <div style="background:rgba(255,255,255,0.06); padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                      <div style="font-size:11px; color:#94a3b8; font-weight:600;">Quality Grade</div>
+                      <div style="font-size:18px; font-weight:800; color:#34d399; margin-top:2px;">${quality.grade}</div>
+                      <div style="font-size:10px; color:#cbd5e1;">Score: ${quality.score}/100</div>
+                    </div>
+
+                    <div style="background:rgba(255,255,255,0.06); padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                      <div style="font-size:11px; color:#94a3b8; font-weight:600;">Recommended Best Use</div>
+                      <div style="font-size:14px; font-weight:800; color:#60a5fa; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${topApp?.application_name || "Composting"}</div>
+                      <div style="font-size:10px; color:#cbd5e1;">Fit: ${topApp?.suitability_score || 90}% Match</div>
+                    </div>
+
+                    <div style="background:rgba(255,255,255,0.06); padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                      <div style="font-size:11px; color:#94a3b8; font-weight:600;">Top Buyer Match</div>
+                      <div style="font-size:14px; font-weight:800; color:#f59e0b; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${topBuyer?.buyer_company || "Industrial Buyer"}</div>
+                      <div style="font-size:10px; color:#cbd5e1;">Match: ${topBuyer?.match_score || 94}%</div>
+                    </div>
+
+                    <div style="background:rgba(255,255,255,0.06); padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                      <div style="font-size:11px; color:#94a3b8; font-weight:600;">Est. Utilization Value</div>
+                      <div style="font-size:16px; font-weight:800; color:#a7f3d0; margin-top:2px;">₹${valueOpt.potentialUtilizationValue.toLocaleString('en-IN')}</div>
+                      <div style="font-size:10px; color:#34d399;">+${valueOpt.roiIncreasePercent}% Uplift</div>
+                    </div>
+                  </div>
+
+                  <!-- Explanations & Environmental Impact -->
+                  <div style="background:rgba(255,255,255,0.04); padding:14px; border-radius:12px; border:1px solid rgba(255,255,255,0.08); font-size:12px; line-height:1.5; color:#cbd5e1; margin-bottom:12px;">
+                    <strong>Recommendation Rationale:</strong> "${topApp?.reason || suitability.explanation}"
+                  </div>
+
+                  <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); padding:10px 14px; border-radius:10px; font-size:12px; color:#a7f3d0;">
+                    <span>🌱 <strong>Environmental Benefit:</strong> Avoids ~${envImpact.co2AvoidedKg} kg CO₂e greenhouse emissions (~${envImpact.treesEquivalent} trees equivalent).</span>
+                    <a href="#intelligence" style="color:#ffffff; font-weight:700; text-decoration:underline;">Full Intelligence Suite →</a>
+                  </div>
+                </div>
+              `;
+            })()}
+
             <!-- Agricultural Technical Specifications -->
             <div style="background:#ffffff; border:1px solid #e2ece2; border-radius:18px; padding:24px; margin-bottom:24px; box-shadow:0 2px 10px rgba(15,61,33,0.04);">
               <h3 style="font-family:'Outfit', sans-serif; font-size:20px; font-weight:700; color:#0f172a; margin-bottom:16px; border-bottom:1px solid #f0f6f0; padding-bottom:10px;">

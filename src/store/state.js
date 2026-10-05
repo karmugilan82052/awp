@@ -15,6 +15,15 @@ import {
   SUSTAINABILITY_METRICS
 } from "./initialData.js";
 import { generateId, deepClone } from "../utils/helpers.js";
+import {
+  calculateQualityScore,
+  calculateSuitabilityScore,
+  determineRecommendedApplications,
+  estimateWasteValue,
+  calculateEnvironmentalImpact,
+  findAggregatedSupply
+} from "../lib/server/wasteIntelligence.ts";
+import { findTopMatchesForListing, findTopListingsForBuyer, calculateBuyerMatchScore } from "../lib/server/buyerMatching.ts";
 
 const STORAGE_KEY = "AGRIWASTE_STATE_V4";
 
@@ -204,14 +213,21 @@ class Store {
       minOrderQty: parseFloat(listingData.minOrderQty) || 1,
       availableQty: parseFloat(listingData.quantity) || 1,
       condition: listingData.condition || "Dry",
-      moisture: listingData.moisture || "12%",
-      qualityGrade: listingData.qualityGrade || "Grade A",
+      moisture: listingData.moisture || listingData.moisture_level || "12%",
+      moisture_level: listingData.moisture_level || listingData.moisture || "12%",
+      qualityGrade: listingData.qualityGrade || listingData.quality_grade || "Grade A",
+      quality_grade: listingData.quality_grade || listingData.qualityGrade || "Grade A",
+      harvest_age: listingData.harvest_age || listingData.harvestAge || "5 days",
+      contamination_level: listingData.contamination_level || "Low",
+      storage_condition: listingData.storage_condition || listingData.storageType || "Covered Shed",
+      processing_level: listingData.processing_level || listingData.condition || "Baled",
+      intended_use: listingData.intended_use || "Composting & Biomass",
       packaging: listingData.packaging || "Standard Packaging",
       harvestDate: listingData.harvestDate || new Date().toISOString().split("T")[0],
       expiryDate: listingData.expiryDate || "2027-03-01",
       pickupAvailability: listingData.pickupAvailability || "Immediate Pickup",
       loadingAssistance: listingData.loadingAssistance || "Yes",
-      storageType: listingData.storageType || "Covered Shed",
+      storageType: listingData.storageType || listingData.storage_condition || "Covered Shed",
       location: `${listingData.district || "District"}, ${listingData.state || "State"}`,
       district: listingData.district || "District",
       state: listingData.state || "State",
@@ -800,6 +816,126 @@ class Store {
   // ==========================================
   getSustainabilityMetrics() {
     return deepClone(this.state.sustainability);
+  }
+
+  // ==========================================
+  // AGRIWASTE INTELLIGENCE ENGINE METHODS
+  // ==========================================
+  getListingIntelligence(listingId) {
+    const listing = this.getListingById(listingId);
+    if (!listing) return null;
+
+    const buyerProfiles = this.getUsers("buyer");
+    const quality = calculateQualityScore(listing);
+    const suitability = calculateSuitabilityScore(listing);
+    const recommendations = determineRecommendedApplications(listing);
+    const buyerMatches = findTopMatchesForListing(listing, buyerProfiles, 5);
+    const valueOpt = estimateWasteValue(listing);
+    const envImpact = calculateEnvironmentalImpact(listing.quantity || 1, listing.category);
+
+    return {
+      listing,
+      quality,
+      suitability,
+      recommendations,
+      buyerMatches,
+      valueOpt,
+      envImpact
+    };
+  }
+
+  getEnrichedListings(filters = {}) {
+    const listings = this.getListings(filters);
+    const buyerProfiles = this.getUsers("buyer");
+
+    return listings.map(l => {
+      const quality = calculateQualityScore(l);
+      const suitability = calculateSuitabilityScore(l);
+      const recommendations = determineRecommendedApplications(l);
+      const buyerMatches = findTopMatchesForListing(l, buyerProfiles, 3);
+      const valueOpt = estimateWasteValue(l);
+      const envImpact = calculateEnvironmentalImpact(l.quantity || 1, l.category);
+
+      return {
+        ...l,
+        quality,
+        suitability,
+        recommendations,
+        buyerMatches,
+        valueOpt,
+        envImpact
+      };
+    });
+  }
+
+  getBuyerMatchesForBuyer(buyerId = null) {
+    const currentRole = this.getCurrentRole();
+    const currentUser = this.getCurrentUser();
+    const targetUserId = buyerId || (currentRole === "buyer" ? currentUser.id : "usr-buyer-1");
+    const buyerProfile = this.getUserById(targetUserId) || currentUser;
+
+    const allListings = this.getListings();
+    return findTopListingsForBuyer(buyerProfile, allListings, 10);
+  }
+
+  getAggregatedSupplyOpportunities() {
+    const listings = this.getListings();
+    const buyerProfiles = this.getUsers("buyer");
+    const buyerReqs = buyerProfiles.map(b => ({
+      id: b.id,
+      name: b.name,
+      companyName: b.companyName || b.farmName || b.name,
+      preferredCategory: b.preferredCategory || "paddy-straw",
+      requiredQty: b.requiredQty || 10,
+      maxPrice: b.maxPrice || 3500
+    }));
+
+    return findAggregatedSupply(listings, buyerReqs);
+  }
+
+  getPlatformIntelligenceMetrics() {
+    const enrichedListings = this.getEnrichedListings({ includeAllStatuses: true });
+    let totalWSS = 0;
+    let totalQuality = 0;
+    let totalValueUplift = 0;
+    let totalCO2Avoided = 0;
+    const appCounts = {};
+
+    enrichedListings.forEach(item => {
+      totalWSS += item.suitability.wssScore;
+      totalQuality += item.quality.score;
+      totalValueUplift += item.valueOpt.valueUplift;
+      totalCO2Avoided += item.envImpact.co2AvoidedKg;
+
+      const topApp = item.recommendations[0]?.application_name || "Composting";
+      appCounts[topApp] = (appCounts[topApp] || 0) + 1;
+    });
+
+    const count = enrichedListings.length || 1;
+    const avgSuitability = Math.round(totalWSS / count);
+    const avgQuality = Math.round(totalQuality / count);
+
+    let mostRecommendedApp = "Mushroom Cultivation & Biomass Fuel";
+    let maxAppCount = 0;
+    Object.keys(appCounts).forEach(app => {
+      if (appCounts[app] > maxAppCount) {
+        maxAppCount = appCounts[app];
+        mostRecommendedApp = app;
+      }
+    });
+
+    const aggregationOpps = this.getAggregatedSupplyOpportunities();
+
+    return {
+      totalListingsAnalyzed: count,
+      avgSuitabilityScore: avgSuitability,
+      avgQualityScore: avgQuality,
+      mostRecommendedApp,
+      totalValueUpliftRs: totalValueUplift,
+      totalCO2AvoidedTons: (totalCO2Avoided / 1000).toFixed(1),
+      activeAggregationOpportunities: aggregationOpps.length,
+      aggregationOpportunities: aggregationOpps
+    };
   }
 
   // ==========================================

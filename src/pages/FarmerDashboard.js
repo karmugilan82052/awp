@@ -47,7 +47,7 @@ export function renderFarmerDashboardPage(activeSubtab = "overview") {
         </div>
 
         <!-- 4 Key Stat Cards -->
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:20px; margin-bottom:32px;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:20px; margin-bottom:24px;">
           ${renderStatCard({
             title: "Total Sales Earnings",
             value: formatINR(totalEarnings || 284500),
@@ -82,6 +82,60 @@ export function renderFarmerDashboardPage(activeSubtab = "overview") {
             color: "purple"
           })}
         </div>
+
+        <!-- WASTE INTELLIGENCE OVERVIEW CARD -->
+        ${(() => {
+          const intelMetrics = store.getPlatformIntelligenceMetrics();
+          const aggregations = store.getAggregatedSupplyOpportunities();
+          const farmerWssAvg = 88;
+
+          return `
+            <div style="background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius:18px; padding:24px; margin-bottom:32px; color:#ffffff; box-shadow:0 6px 20px rgba(15,23,42,0.12);">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span style="font-size:24px;">🧠</span>
+                  <div>
+                    <h3 style="font-family:'Outfit', sans-serif; font-size:18px; font-weight:800; color:#ffffff; margin:0;">
+                      WASTE INTELLIGENCE ANALYTICS
+                    </h3>
+                    <p style="font-size:12px; color:#94a3b8; margin:2px 0 0 0;">
+                      Automated quality normalization, suitability scoring, and buyer matching for your crop residue.
+                    </p>
+                  </div>
+                </div>
+                <a href="#intelligence" style="background:#16a34a; hover:background:#15803d; color:#ffffff; padding:10px 20px; border-radius:10px; font-size:13px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s;">
+                  <span>🔍</span> Analyze My Waste →
+                </a>
+              </div>
+
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:12px;">
+                <div style="background:rgba(255,255,255,0.06); padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,0.08);">
+                  <div style="font-size:11px; color:#94a3b8; font-weight:600;">Avg Suitability (WSS)</div>
+                  <div style="font-size:20px; font-weight:800; color:#34d399; margin-top:2px;">${farmerWssAvg}/100</div>
+                  <div style="font-size:10px; color:#cbd5e1;">Highly Suitable</div>
+                </div>
+
+                <div style="background:rgba(255,255,255,0.06); padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,0.08);">
+                  <div style="font-size:11px; color:#94a3b8; font-weight:600;">Recommended Applications</div>
+                  <div style="font-size:13px; font-weight:800; color:#60a5fa; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Mushroom & Biofuel</div>
+                  <div style="font-size:10px; color:#cbd5e1;">High Value Add</div>
+                </div>
+
+                <div style="background:rgba(255,255,255,0.06); padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,0.08);">
+                  <div style="font-size:11px; color:#94a3b8; font-weight:600;">Aggregated Supply</div>
+                  <div style="font-size:20px; font-weight:800; color:#f59e0b; margin-top:2px;">${aggregations.length} Pools</div>
+                  <div style="font-size:10px; color:#cbd5e1;">Multi-Farmer Clusters</div>
+                </div>
+
+                <div style="background:rgba(255,255,255,0.06); padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,0.08);">
+                  <div style="font-size:11px; color:#94a3b8; font-weight:600;">CO₂e Burning Avoided</div>
+                  <div style="font-size:20px; font-weight:800; color:#a7f3d0; margin-top:2px;">64.8 Tons</div>
+                  <div style="font-size:10px; color:#34d399;">~3,240 Trees Equivalent</div>
+                </div>
+              </div>
+            </div>
+          `;
+        })()}
 
         <!-- Charts Section (Recharts / Chart.js Canvas) -->
         <div style="display:grid; grid-template-columns:1.4fr 1fr; gap:24px; margin-bottom:32px;" class="dashboard-charts-grid">

@@ -35,6 +35,9 @@ export function renderNavbar(currentPath = "/") {
         <nav class="desktop-nav" style="display:flex; align-items:center; gap:6px;">
           <a href="#/" class="nav-link ${currentPath === "/" ? "active" : ""}" style="padding:8px 14px; border-radius:8px; font-size:14px; font-weight:600; color:${currentPath === "/" ? "#16a34a" : "#334155"}; transition:all 0.2s;">Home</a>
           <a href="#marketplace" class="nav-link ${currentPath.startsWith("/marketplace") ? "active" : ""}" style="padding:8px 14px; border-radius:8px; font-size:14px; font-weight:600; color:${currentPath.startsWith("/marketplace") ? "#16a34a" : "#334155"}; transition:all 0.2s;">Marketplace</a>
+          <a href="#intelligence" class="nav-link ${currentPath.startsWith("/intelligence") ? "active" : ""}" style="padding:8px 14px; border-radius:8px; font-size:14px; font-weight:700; color:${currentPath.startsWith("/intelligence") ? "#16a34a" : "#0f172a"}; background:#f0fdf4; border:1px solid #bbf7d0; display:flex; align-items:center; gap:4px;">
+            <span>🧠</span> Intelligence
+          </a>
           
           <a href="#sell-waste" class="nav-link ${currentPath === "/sell-waste" ? "active" : ""}" style="padding:8px 14px; border-radius:8px; font-size:14px; font-weight:600; color:#16a34a; background:#f0fdf4; border:1px solid #bbf7d0; display:flex; align-items:center; gap:6px;">
             <span>+</span> Sell Agri Waste
