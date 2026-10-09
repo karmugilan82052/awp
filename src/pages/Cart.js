@@ -6,6 +6,31 @@ import { store } from "../store/state.js";
 import { formatINR } from "../utils/formatters.js";
 
 export function renderCartPage() {
+  const currentRole = store.getCurrentRole();
+  if (currentRole !== "buyer") {
+    return `
+      <div class="page-cart" style="padding:80px 20px; font-family:'Plus Jakarta Sans', sans-serif; background:#f7faf7; min-height:80vh; text-align:center;">
+        <div class="container" style="max-width:600px; margin:0 auto; background:#ffffff; border:1px solid #e2ece2; border-radius:24px; padding:50px 30px; box-shadow:0 10px 30px rgba(15,61,33,0.06);">
+          <div style="font-size:56px; margin-bottom:16px;">🔒</div>
+          <h2 style="font-family:'Outfit', sans-serif; font-size:28px; font-weight:800; color:#0f172a; margin-bottom:10px;">
+            Buyer-Exclusive Access
+          </h2>
+          <p style="font-size:15px; color:#64748b; margin-bottom:28px; line-height:1.6;">
+            The Procurement Cart is reserved strictly for verified Industrial Buyers, Bio-Refiners, and Power Plants. As a <strong>${currentRole ? currentRole.toUpperCase() : 'Non-Buyer'}</strong>, you can list and sell agricultural waste.
+          </p>
+          <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+            <a href="#sell-waste" style="background:#16a34a; color:white; padding:13px 26px; border-radius:12px; font-size:15px; font-weight:800; text-decoration:none; display:inline-block; box-shadow:0 4px 12px rgba(22,163,74,0.3);">
+              🌾 Sell Your Agri Waste →
+            </a>
+            <a href="#login" style="background:#f1f5f9; color:#334155; border:1.5px solid #cbd5e1; padding:13px 26px; border-radius:12px; font-size:15px; font-weight:700; text-decoration:none; display:inline-block;">
+              Sign In as Buyer
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   const calc = store.getCartCalculations();
   const items = calc.items;
 

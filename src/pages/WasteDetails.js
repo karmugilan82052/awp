@@ -9,6 +9,8 @@ import { getRecommendedBuyersForListing } from "../services/recommendationEngine
 
 export function renderWasteDetailsPage(listingId) {
   const listing = store.getListingById(listingId);
+  const currentRole = store.getCurrentRole();
+  const isBuyer = currentRole === "buyer";
 
   if (!listing) {
     return `
@@ -178,18 +180,33 @@ export function renderWasteDetailsPage(listingId) {
 
               <!-- Action Buttons -->
               <div style="display:flex; flex-direction:column; gap:10px;">
-                <button id="btn-details-buy-now" data-id="${listing.id}" style="width:100%; background:#16a34a; color:white; border:none; padding:14px; border-radius:10px; font-size:15px; font-weight:800; cursor:pointer; box-shadow:0 4px 12px rgba(22,163,74,0.3);">
-                  ⚡ Buy Now (Instant Escrow Checkout)
-                </button>
-                <button id="btn-details-add-cart" data-id="${listing.id}" style="width:100%; background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0; padding:12px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer;">
-                  🛒 Add to Procurement Cart
-                </button>
-                <button id="btn-details-contact-seller" data-seller-id="${listing.seller?.id}" data-listing-id="${listing.id}" style="width:100%; background:#ffffff; color:#334155; border:1px solid #cbd5e1; padding:10px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+                ${
+                  isBuyer
+                    ? `
+                  <button id="btn-details-buy-now" data-id="${listing.id}" style="width:100%; background:#16a34a; color:white; border:none; padding:15px; border-radius:12px; font-size:16px; font-weight:800; cursor:pointer; box-shadow:0 6px 16px rgba(22,163,74,0.3); transition:all 0.2s;">
+                    ⚡ Buy Now (Instant Escrow Checkout)
+                  </button>
+                  <button id="btn-details-add-cart" data-id="${listing.id}" style="width:100%; background:#f0fdf4; color:#16a34a; border:1.5px solid #bbf7d0; padding:13px; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; transition:all 0.2s;">
+                    🛒 Add to Procurement Cart
+                  </button>
+                `
+                    : `
+                  <div style="background:#fffbeb; border:1.5px solid #fde68a; border-radius:12px; padding:16px; text-align:center;">
+                    <div style="font-size:22px; margin-bottom:4px;">🔒</div>
+                    <strong style="color:#92400e; font-size:15px; display:block; margin-bottom:4px;">Buyer-Exclusive Procurement</strong>
+                    <p style="color:#78350f; font-size:13px; margin:0 0 12px 0; line-height:1.4;">Only verified Industrial Buyers & Refiners are authorized to purchase agricultural waste products.</p>
+                    <a href="#login" style="display:inline-block; background:#d97706; color:white; padding:9px 18px; border-radius:8px; font-weight:800; font-size:13.5px; text-decoration:none; box-shadow:0 3px 8px rgba(217,119,6,0.25);">
+                      Sign In as Buyer to Purchase →
+                    </a>
+                  </div>
+                `
+                }
+                <button id="btn-details-contact-seller" data-seller-id="${listing.seller?.id}" data-listing-id="${listing.id}" style="width:100%; background:#ffffff; color:#334155; border:1.5px solid #cbd5e1; padding:12px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
                   💬 Contact Farmer Directly
                 </button>
               </div>
 
-              <div style="margin-top:16px; font-size:11px; color:#64748b; text-align:center;">
+              <div style="margin-top:16px; font-size:12px; color:#64748b; text-align:center;">
                 🔒 100% Escrow Protection • 3-Stage Weighbridge Verification
               </div>
 

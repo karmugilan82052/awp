@@ -35,8 +35,9 @@ class Store {
     }
 
     return {
-      currentRole: "farmer", // farmer | buyer | admin
-      currentUserId: "usr-farmer-1",
+      isLoggedIn: false,
+      currentRole: null, // farmer | buyer | admin
+      currentUserId: null,
       categories: [...INITIAL_CATEGORIES],
       listings: [...INITIAL_LISTINGS],
       users: [...INITIAL_USERS],
@@ -78,11 +79,28 @@ class Store {
   // ==========================================
   // CURRENT USER & ROLE MANAGEMENT
   // ==========================================
+  isLoggedIn() {
+    return Boolean(this.state.isLoggedIn && this.state.currentUserId);
+  }
+
+  login(role, userId = null) {
+    this.state.isLoggedIn = true;
+    this.setCurrentRole(role, userId);
+  }
+
+  logout() {
+    this.state.isLoggedIn = false;
+    this.state.currentRole = null;
+    this.state.currentUserId = null;
+    this.saveState();
+  }
+
   getCurrentRole() {
     return this.state.currentRole;
   }
 
   setCurrentRole(role, userId = null) {
+    this.state.isLoggedIn = true;
     this.state.currentRole = role;
     if (userId) {
       this.state.currentUserId = userId;
@@ -95,11 +113,14 @@ class Store {
   }
 
   getCurrentUser() {
+    if (!this.state.currentUserId) return null;
     const user = this.state.users.find(u => u.id === this.state.currentUserId);
     if (user) return deepClone(user);
-    // Fallback based on role
-    const fallback = this.state.users.find(u => u.role === this.state.currentRole) || this.state.users[0];
-    return deepClone(fallback);
+    if (this.state.currentRole) {
+      const fallback = this.state.users.find(u => u.role === this.state.currentRole);
+      if (fallback) return deepClone(fallback);
+    }
+    return null;
   }
 
   updateCurrentUser(userData) {
@@ -306,6 +327,9 @@ class Store {
   }
 
   addToCart(listing, quantity = null) {
+    if (this.getCurrentRole() !== "buyer") {
+      return false;
+    }
     if (!this.state.cart) this.state.cart = [];
     const qty = quantity !== null ? parseFloat(quantity) : listing.minOrderQty || 1;
     const existing = this.state.cart.find(item => item.listingId === listing.id);

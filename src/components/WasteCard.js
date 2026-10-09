@@ -56,7 +56,7 @@ export function renderWasteCard(listing, isListView = false) {
       
       <!-- Image Container with Badges -->
       <div style="position:relative; height:180px; width:100%; overflow:hidden; background:#f1f5f9;">
-        <img src="${firstImage}" alt="${listing.title}" style="width:100%; height:100%; object-fit:cover; transition:transform 0.3s ease;" class="card-img" />
+        <img src="${firstImage}" alt="${listing.title}" onerror="this.onerror=null; this.src='/images/waste/paddy-straw.jpg';" style="width:100%; height:100%; object-fit:cover; transition:transform 0.3s ease;" class="card-img" />
         
         <span style="position:absolute; top:12px; left:12px; background:rgba(255,255,255,0.92); backdrop-filter:blur(6px); color:#16a34a; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; border:1px solid #bbf7d0;">
           ${listing.categoryName}

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
 /* ==========================================================================
    AgriWaste Marketplace — Complete Design System & Styles
    ========================================================================== */
@@ -56,8 +58,8 @@
   --status-info-bg: #e0f2fe;
 
   /* Typography */
-  --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  --font-display: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  --font-main: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --font-display: 'Outfit', 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
   /* Radius & Shadows */
   --radius-xs: 4px;
@@ -87,16 +89,18 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-family: var(--font-main);
 }
 
 html {
+  font-size: 19.5px;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  font-family: var(--font-main);
+  font-family: var(--font-main) !important;
   background-color: var(--bg-main);
   color: var(--text-main);
   line-height: 1.6;
@@ -104,6 +108,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  font-size: 1.05rem;
 }
 
 #app {
@@ -112,13 +117,24 @@ body {
   min-height: 100vh;
 }
 
-a {
+a, a:visited, a:hover, a:active, a:focus {
   color: inherit;
-  text-decoration: none;
+  text-decoration: none !important;
+  border-bottom: none !important;
+  outline: none;
+  font-family: var(--font-main) !important;
+}
+
+.nav-link, .nav-link:hover, .nav-link:visited, .nav-link:active,
+.desktop-nav a, .desktop-nav a:hover, .desktop-nav a:visited,
+#role-dropdown-menu, #role-dropdown-menu *, .role-select-option, .role-switcher-wrapper * {
+  text-decoration: none !important;
+  border-bottom: none !important;
+  font-family: var(--font-main) !important;
 }
 
 button, input, select, textarea {
-  font-family: inherit;
+  font-family: var(--font-main) !important;
   font-size: inherit;
 }
 
@@ -142,23 +158,23 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
 }
 
-h1 { font-size: 2.75rem; letter-spacing: -0.02em; }
-h2 { font-size: 2rem; letter-spacing: -0.015em; }
-h3 { font-size: 1.5rem; letter-spacing: -0.01em; }
-h4 { font-size: 1.25rem; }
-h5 { font-size: 1.1rem; }
-h6 { font-size: 0.95rem; }
+h1 { font-size: 2.85rem; letter-spacing: -0.02em; }
+h2 { font-size: 2.15rem; letter-spacing: -0.015em; }
+h3 { font-size: 1.6rem; letter-spacing: -0.01em; }
+h4 { font-size: 1.35rem; }
+h5 { font-size: 1.15rem; }
+h6 { font-size: 1rem; }
 
 @media (max-width: 768px) {
-  h1 { font-size: 2.15rem; }
-  h2 { font-size: 1.65rem; }
-  h3 { font-size: 1.3rem; }
+  h1 { font-size: 2.25rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.4rem; }
 }
 
 /* Containers */
 .container {
   width: 100%;
-  max-width: 1280px;
+  max-width: 1320px;
   margin: 0 auto;
   padding: 0 1.5rem;
 }
@@ -177,9 +193,9 @@ h6 { font-size: 0.95rem; }
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  font-weight: 600;
-  font-size: 0.9375rem;
-  padding: 0.6875rem 1.375rem;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
   border-radius: var(--radius-md);
   transition: all var(--transition-fast);
   white-space: nowrap;
@@ -373,8 +389,8 @@ h6 { font-size: 0.95rem; }
 }
 
 .nav-link {
-  font-weight: 600;
-  font-size: 0.9375rem;
+  font-weight: 700;
+  font-size: 1.05rem;
   color: var(--forest-800);
   transition: color var(--transition-fast);
   padding: 0.35rem 0.25rem;
@@ -391,7 +407,7 @@ h6 { font-size: 0.95rem; }
   bottom: -0.25rem;
   left: 0;
   right: 0;
-  height: 2px;
+  height: 2.5px;
   background-color: var(--primary-600);
   border-radius: var(--radius-full);
 }
@@ -410,14 +426,14 @@ h6 { font-size: 0.95rem; }
 .role-badge-btn {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0.85rem;
+  gap: 0.6rem;
+  padding: 0.5rem 1rem;
   background-color: var(--primary-50);
-  border: 1px solid var(--primary-200);
+  border: 1.5px solid var(--primary-200);
   border-radius: var(--radius-full);
   color: var(--forest-900);
-  font-weight: 700;
-  font-size: 0.8125rem;
+  font-weight: 800;
+  font-size: 0.95rem;
   transition: all var(--transition-fast);
 }
 
@@ -2173,4 +2189,51 @@ h6 { font-size: 0.95rem; }
   .footer-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ==========================================================================
+   Global Big Font & High-Legibility Presentation Overrides
+   ========================================================================== */
+
+table, .table {
+  font-size: 16px !important;
+}
+
+th {
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.5px !important;
+  padding: 14px 16px !important;
+}
+
+td {
+  font-size: 15.5px !important;
+  padding: 14px 16px !important;
+}
+
+input, select, textarea {
+  font-size: 16px !important;
+  padding: 10px 14px !important;
+}
+
+label {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+
+.btn, button.btn-primary, button.btn-secondary {
+  font-size: 16px !important;
+}
+
+.card-title, h1, h2, h3, h4 {
+  font-weight: 800 !important;
+}
+
+p, span, div {
+  -webkit-font-smoothing: antialiased;
+}
+
+.badge, .status-badge {
+  font-size: 13.5px !important;
+  padding: 5px 12px !important;
 }
