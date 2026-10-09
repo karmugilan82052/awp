@@ -16,15 +16,6 @@ import {
 } from "../../src/store/initialData.js";
 import { classifyAgriWasteImage, getAIAssistantResponse } from "../../src/services/aiService.js";
 import { getRecommendedBuyersForListing } from "../../src/services/recommendationEngine.js";
-import {
-  calculateQualityScore,
-  calculateSuitabilityScore,
-  determineRecommendedApplications,
-  estimateWasteValue,
-  calculateEnvironmentalImpact,
-  findAggregatedSupply
-} from "../../src/lib/server/wasteIntelligence.ts";
-import { findTopMatchesForListing, findTopListingsForBuyer, calculateBuyerMatchScore } from "../../src/lib/server/buyerMatching.ts";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -256,102 +247,6 @@ app.get("/api/recommendations/:wasteId", (req, res) => {
   const listing = dbListings.find(l => l.id === req.params.wasteId) || dbListings[0];
   const recommendations = getRecommendedBuyersForListing(listing, 5);
   res.json({ success: true, data: recommendations });
-});
-
-// ==========================================
-// 6.5 AGRIWASTE INTELLIGENCE ENGINE API ENDPOINTS
-// ==========================================
-app.get("/api/intelligence/listings", (req, res) => {
-  const buyerProfiles = dbUsers.filter(u => u.role === "buyer");
-  const enriched = dbListings.map(listing => {
-    const quality = calculateQualityScore(listing);
-    const suitability = calculateSuitabilityScore(listing);
-    const recommendations = determineRecommendedApplications(listing);
-    const buyerMatches = findTopMatchesForListing(listing, buyerProfiles, 3);
-    const valueOpt = estimateWasteValue(listing);
-    const envImpact = calculateEnvironmentalImpact(listing.quantity || 1, listing.category);
-
-    return {
-      ...listing,
-      quality,
-      suitability,
-      recommendations,
-      buyerMatches,
-      valueOpt,
-      envImpact
-    };
-  });
-
-  res.json({ success: true, count: enriched.length, data: enriched });
-});
-
-app.get("/api/intelligence/waste/:id", (req, res) => {
-  const listing = dbListings.find(l => l.id === req.params.id);
-  if (!listing) return res.status(404).json({ success: false, message: "Listing not found" });
-
-  const buyerProfiles = dbUsers.filter(u => u.role === "buyer");
-  const quality = calculateQualityScore(listing);
-  const suitability = calculateSuitabilityScore(listing);
-  const recommendations = determineRecommendedApplications(listing);
-  const buyerMatches = findTopMatchesForListing(listing, buyerProfiles, 5);
-  const valueOpt = estimateWasteValue(listing);
-  const envImpact = calculateEnvironmentalImpact(listing.quantity || 1, listing.category);
-
-  res.json({
-    success: true,
-    data: {
-      listing,
-      quality,
-      suitability,
-      recommendations,
-      buyerMatches,
-      valueOpt,
-      envImpact
-    }
-  });
-});
-
-app.post("/api/intelligence/analyze", (req, res) => {
-  const listingData = req.body || {};
-  const quality = calculateQualityScore(listingData);
-  const suitability = calculateSuitabilityScore(listingData);
-  const recommendations = determineRecommendedApplications(listingData);
-  const valueOpt = estimateWasteValue(listingData);
-  const envImpact = calculateEnvironmentalImpact(listingData.quantity || 1, listingData.category);
-
-  res.json({
-    success: true,
-    data: {
-      quality,
-      suitability,
-      recommendations,
-      valueOpt,
-      envImpact
-    }
-  });
-});
-
-app.get("/api/intelligence/aggregated-supply", (req, res) => {
-  const buyerProfiles = dbUsers.filter(u => u.role === "buyer");
-  const buyerReqs = buyerProfiles.map(b => ({
-    id: b.id,
-    name: b.name,
-    companyName: b.companyName || b.farmName || b.name,
-    preferredCategory: b.preferredCategory || "paddy-straw",
-    requiredQty: b.requiredQty || 10,
-    maxPrice: b.maxPrice || 3500
-  }));
-
-  const aggregated = findAggregatedSupply(dbListings, buyerReqs);
-  res.json({ success: true, count: aggregated.length, data: aggregated });
-});
-
-app.get("/api/intelligence/buyer-matches/:buyerId", (req, res) => {
-  const buyer = dbUsers.find(u => u.id === req.params.buyerId) || dbUsers.find(u => u.role === "buyer");
-  if (!buyer) return res.status(404).json({ success: false, message: "Buyer profile not found" });
-
-  const topListings = findTopListingsForBuyer(buyer, dbListings, 10);
-  res.json({ success: true, buyerId: buyer.id, buyerName: buyer.name, data: topListings });
 });
 
 // ==========================================

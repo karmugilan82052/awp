@@ -135,47 +135,6 @@ export function renderSellWastePage() {
 
           </div>
 
-          <!-- Section 3.5: Advanced Waste Information (AgriWaste Intelligence) -->
-          <div style="margin-bottom:30px; border-top:1px solid #f0f6f0; padding-top:24px; background:#f8fafc; padding:20px; border-radius:12px; border:1px border-slate-200;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-              <h3 style="font-family:'Outfit', sans-serif; font-size:16px; font-weight:700; color:#0f172a; margin:0; display:flex; align-items:center; gap:6px;">
-                <span>🧠</span> Advanced Waste Information (Optional)
-              </h3>
-              <span style="font-size:11px; font-weight:700; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px;">Enhances WSS & Buyer Match</span>
-            </div>
-
-            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:12px;">
-              <div>
-                <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:4px;">Harvest Age (Days)</label>
-                <input type="number" id="input-listing-age" min="1" max="365" value="5" placeholder="e.g. 5" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; font-size:13px;" />
-              </div>
-
-              <div>
-                <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:4px;">Contamination Level</label>
-                <select id="input-listing-contamination" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; font-size:13px; background:#ffffff;">
-                  <option value="Low">Low (Clean / Dust Free)</option>
-                  <option value="Medium">Medium (Slight Dust)</option>
-                  <option value="High">High (Debris Present)</option>
-                </select>
-              </div>
-
-              <div>
-                <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:4px;">Processing Level</label>
-                <select id="input-listing-processing" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; font-size:13px; background:#ffffff;">
-                  <option value="Baled">Baled & Compressed</option>
-                  <option value="Chopped">Chopped / Shredded</option>
-                  <option value="Raw">Raw / Unprocessed</option>
-                  <option value="Pelletized">Pelletized</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:4px;">Intended Use / Preferred Application</label>
-              <input type="text" id="input-listing-intended-use" placeholder="e.g. Mushroom cultivation, Composting, Biomass fuel..." style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; font-size:13px;" />
-            </div>
-          </div>
-
           <!-- Section 4: Farm Location -->
           <div style="margin-bottom:30px; border-top:1px solid #f0f6f0; padding-top:24px;">
             <h3 style="font-family:'Outfit', sans-serif; font-size:18px; font-weight:700; color:#0f172a; margin-bottom:16px;">

@@ -56,7 +56,7 @@ export function renderWasteCard(listing, isListView = false) {
       
       <!-- Image Container with Badges -->
       <div style="position:relative; height:180px; width:100%; overflow:hidden; background:#f1f5f9;">
-        <img src="${firstImage}" alt="${listing.title}" style="width:100%; height:100%; object-fit:cover; transition:transform 0.3s ease;" class="card-img" />
+        <img src="${firstImage}" alt="${listing.title}" onerror="this.onerror=null; this.src='/images/waste/paddy-straw.jpg';" style="width:100%; height:100%; object-fit:cover; transition:transform 0.3s ease;" class="card-img" />
         
         <span style="position:absolute; top:12px; left:12px; background:rgba(255,255,255,0.92); backdrop-filter:blur(6px); color:#16a34a; font-size:11px; font-weight:800; padding:4px 10px; border-radius:20px; border:1px solid #bbf7d0;">
           ${listing.categoryName}
@@ -91,7 +91,7 @@ export function renderWasteCard(listing, isListView = false) {
         </div>
 
         <!-- Price & Quantity Specs -->
-        <div style="background:#f8fafc; padding:10px 12px; border-radius:10px; border:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div style="background:#f8fafc; padding:10px 12px; border-radius:10px; border:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
           <div>
             <span style="font-size:11px; color:#64748b; display:block;">Price per Ton</span>
             <span style="font-family:'Outfit', sans-serif; font-size:18px; font-weight:800; color:#16a34a;">${formatINR(listing.price)}</span>
@@ -102,26 +102,12 @@ export function renderWasteCard(listing, isListView = false) {
           </div>
         </div>
 
-        <!-- AgriWaste Intelligence Snippet Badge -->
-        <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:8px 10px; border-radius:10px; margin-bottom:14px; font-size:11px; color:#166534;">
-          <div style="display:flex; justify-content:space-between; font-weight:700; margin-bottom:2px;">
-            <span>🧠 WSS: ${listing.suitability?.wssScore || 85}/100</span>
-            <span>Rec: ${listing.recommendations?.[0]?.application_name || "Mushroom / Biofuel"}</span>
-          </div>
-          <div style="font-size:10px; color:#15803d;">
-            Best Match: <strong>${listing.buyerMatches?.[0]?.buyer_company || "Industrial Buyer"} (${listing.buyerMatches?.[0]?.match_score || 94}%)</strong>
-          </div>
-        </div>
-
         <!-- Action Buttons -->
-        <div style="display:flex; gap:6px; margin-top:auto;">
-          <button class="btn-quick-add-cart" data-id="${listing.id}" title="Quick Add to Cart" style="background:#f1f5f9; border:1px solid #cbd5e1; padding:9px 10px; border-radius:8px; cursor:pointer; font-weight:700; font-size:14px; flex-shrink:0;">
+        <div style="display:flex; gap:8px; margin-top:auto;">
+          <button class="btn-quick-add-cart" data-id="${listing.id}" title="Quick Add to Cart" style="background:#f1f5f9; border:1px solid #cbd5e1; padding:9px 12px; border-radius:8px; cursor:pointer; font-weight:700; font-size:14px; flex-shrink:0;">
             🛒
           </button>
-          <a href="#intelligence" style="background:#0f172a; color:white; padding:9px 10px; border-radius:8px; font-size:11px; font-weight:700; text-align:center; text-decoration:none; flex-shrink:0;">
-            🧠 Intel
-          </a>
-          <a href="#waste/${listing.id}" style="background:#16a34a; color:white; padding:9px 12px; border-radius:8px; font-size:12px; font-weight:700; text-align:center; text-decoration:none; flex-grow:1;">
+          <a href="#waste/${listing.id}" style="background:#16a34a; color:white; padding:9px 14px; border-radius:8px; font-size:13px; font-weight:700; text-align:center; text-decoration:none; flex-grow:1;">
             View Details
           </a>
         </div>

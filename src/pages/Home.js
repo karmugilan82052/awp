@@ -119,7 +119,7 @@ export function renderHomePage() {
               .map(
                 cat => `
               <a href="#marketplace?category=${cat.id}" style="background:#ffffff; border:1px solid #e2ece2; border-radius:16px; padding:18px; text-decoration:none; color:inherit; display:flex; gap:16px; align-items:center; box-shadow:0 2px 8px rgba(15,61,33,0.04); transition:all 0.2s;" class="category-card">
-                <img src="${cat.image}" alt="${cat.name}" style="width:64px; height:64px; border-radius:12px; object-fit:cover; flex-shrink:0;" />
+                <img src="${cat.image}" alt="${cat.name}" onerror="this.onerror=null; this.src='/images/waste/paddy-straw.jpg';" style="width:64px; height:64px; border-radius:12px; object-fit:cover; flex-shrink:0;" />
                 <div>
                   <h4 style="font-family:'Outfit', sans-serif; font-size:16px; font-weight:700; color:#0f172a; margin-bottom:4px;">${cat.name}</h4>
                   <span style="font-size:12px; color:#16a34a; font-weight:700; display:block;">${cat.count} Available</span>

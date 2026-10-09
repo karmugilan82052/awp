@@ -57,7 +57,7 @@ export function renderAdminDashboardPage(activeSubtab = "overview") {
         </div>
 
         <!-- 4 Platform Metric Cards -->
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:18px; margin-bottom:24px;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:18px; margin-bottom:32px;">
           ${renderStatCard({
             title: "Total Platform Farmers",
             value: `${farmers.length}`,
@@ -98,64 +98,6 @@ export function renderAdminDashboardPage(activeSubtab = "overview") {
             color: "red"
           })}
         </div>
-
-        <!-- AGRIWASTE INTELLIGENCE ANALYTICS ADMIN SECTION -->
-        ${(() => {
-          const intel = store.getPlatformIntelligenceMetrics();
-
-          return `
-            <div style="background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius:18px; padding:24px; margin-bottom:32px; color:#ffffff; box-shadow:0 6px 20px rgba(15,23,42,0.12);">
-              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:18px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px;">
-                <div style="display:flex; align-items:center; gap:10px;">
-                  <span style="font-size:24px;">🧠</span>
-                  <div>
-                    <h3 style="font-family:'Outfit', sans-serif; font-size:18px; font-weight:800; color:#ffffff; margin:0;">
-                      AGRIWASTE INTELLIGENCE PLATFORM ANALYTICS
-                    </h3>
-                    <p style="font-size:12px; color:#94a3b8; margin:2px 0 0 0;">
-                      National biomass suitability index, value optimization, and environmental impact mitigation metrics.
-                    </p>
-                  </div>
-                </div>
-                <a href="#intelligence" style="background:#10b981; hover:background:#059669; color:#ffffff; padding:8px 16px; border-radius:10px; font-size:12px; font-weight:700; text-decoration:none;">
-                  View Intelligence Engine →
-                </a>
-              </div>
-
-              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:14px;">
-                <div style="background:rgba(255,255,255,0.06); padding:14px; border-radius:12px; border:1px solid rgba(255,255,255,0.08);">
-                  <div style="font-size:11px; color:#94a3b8; font-weight:600;">Listings Analyzed</div>
-                  <div style="font-size:22px; font-weight:800; color:#ffffff; margin-top:2px;">${intel.totalListingsAnalyzed} Listings</div>
-                  <div style="font-size:10px; color:#34d399;">100% Quality Evaluated</div>
-                </div>
-
-                <div style="background:rgba(255,255,255,0.06); padding:14px; border-radius:12px; border:1px solid rgba(255,255,255,0.08);">
-                  <div style="font-size:11px; color:#94a3b8; font-weight:600;">Avg Suitability (WSS)</div>
-                  <div style="font-size:22px; font-weight:800; color:#34d399; margin-top:2px;">${intel.avgSuitabilityScore}/100</div>
-                  <div style="font-size:10px; color:#cbd5e1;">Suitable Platform Index</div>
-                </div>
-
-                <div style="background:rgba(255,255,255,0.06); padding:14px; border-radius:12px; border:1px solid rgba(255,255,255,0.08);">
-                  <div style="font-size:11px; color:#94a3b8; font-weight:600;">Top Recommended App</div>
-                  <div style="font-size:13px; font-weight:800; color:#60a5fa; margin-top:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${intel.mostRecommendedApp}</div>
-                  <div style="font-size:10px; color:#cbd5e1;">Highest Value Pathway</div>
-                </div>
-
-                <div style="background:rgba(255,255,255,0.06); padding:14px; border-radius:12px; border:1px solid rgba(255,255,255,0.08);">
-                  <div style="font-size:11px; color:#94a3b8; font-weight:600;">Supply Aggregations</div>
-                  <div style="font-size:22px; font-weight:800; color:#f59e0b; margin-top:2px;">${intel.activeAggregationOpportunities} Clusters</div>
-                  <div style="font-size:10px; color:#cbd5e1;">Multi-Farmer Pools</div>
-                </div>
-
-                <div style="background:rgba(255,255,255,0.06); padding:14px; border-radius:12px; border:1px solid rgba(255,255,255,0.08);">
-                  <div style="font-size:11px; color:#94a3b8; font-weight:600;">CO₂e Avoided</div>
-                  <div style="font-size:22px; font-weight:800; color:#a7f3d0; margin-top:2px;">${intel.totalCO2AvoidedTons} Tons</div>
-                  <div style="font-size:10px; color:#34d399;">Open Burning Mitigation</div>
-                </div>
-              </div>
-            </div>
-          `;
-        })()}
 
         <!-- Tab Navigation for Admin Views -->
         <div style="display:flex; gap:8px; margin-bottom:24px; border-bottom:1px solid #e2ece2; padding-bottom:12px; overflow-x:auto;">

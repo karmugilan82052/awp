@@ -15,15 +15,6 @@ import {
   SUSTAINABILITY_METRICS
 } from "./initialData.js";
 import { generateId, deepClone } from "../utils/helpers.js";
-import {
-  calculateQualityScore,
-  calculateSuitabilityScore,
-  determineRecommendedApplications,
-  estimateWasteValue,
-  calculateEnvironmentalImpact,
-  findAggregatedSupply
-} from "../lib/server/wasteIntelligence.ts";
-import { findTopMatchesForListing, findTopListingsForBuyer, calculateBuyerMatchScore } from "../lib/server/buyerMatching.ts";
 
 const STORAGE_KEY = "AGRIWASTE_STATE_V4";
 
@@ -44,8 +35,9 @@ class Store {
     }
 
     return {
-      currentRole: "farmer", // farmer | buyer | admin
-      currentUserId: "usr-farmer-1",
+      isLoggedIn: false,
+      currentRole: null, // farmer | buyer | admin
+      currentUserId: null,
       categories: [...INITIAL_CATEGORIES],
       listings: [...INITIAL_LISTINGS],
       users: [...INITIAL_USERS],
@@ -87,11 +79,28 @@ class Store {
   // ==========================================
   // CURRENT USER & ROLE MANAGEMENT
   // ==========================================
+  isLoggedIn() {
+    return Boolean(this.state.isLoggedIn && this.state.currentUserId);
+  }
+
+  login(role, userId = null) {
+    this.state.isLoggedIn = true;
+    this.setCurrentRole(role, userId);
+  }
+
+  logout() {
+    this.state.isLoggedIn = false;
+    this.state.currentRole = null;
+    this.state.currentUserId = null;
+    this.saveState();
+  }
+
   getCurrentRole() {
     return this.state.currentRole;
   }
 
   setCurrentRole(role, userId = null) {
+    this.state.isLoggedIn = true;
     this.state.currentRole = role;
     if (userId) {
       this.state.currentUserId = userId;
@@ -104,11 +113,14 @@ class Store {
   }
 
   getCurrentUser() {
+    if (!this.state.currentUserId) return null;
     const user = this.state.users.find(u => u.id === this.state.currentUserId);
     if (user) return deepClone(user);
-    // Fallback based on role
-    const fallback = this.state.users.find(u => u.role === this.state.currentRole) || this.state.users[0];
-    return deepClone(fallback);
+    if (this.state.currentRole) {
+      const fallback = this.state.users.find(u => u.role === this.state.currentRole);
+      if (fallback) return deepClone(fallback);
+    }
+    return null;
   }
 
   updateCurrentUser(userData) {
@@ -213,21 +225,14 @@ class Store {
       minOrderQty: parseFloat(listingData.minOrderQty) || 1,
       availableQty: parseFloat(listingData.quantity) || 1,
       condition: listingData.condition || "Dry",
-      moisture: listingData.moisture || listingData.moisture_level || "12%",
-      moisture_level: listingData.moisture_level || listingData.moisture || "12%",
-      qualityGrade: listingData.qualityGrade || listingData.quality_grade || "Grade A",
-      quality_grade: listingData.quality_grade || listingData.qualityGrade || "Grade A",
-      harvest_age: listingData.harvest_age || listingData.harvestAge || "5 days",
-      contamination_level: listingData.contamination_level || "Low",
-      storage_condition: listingData.storage_condition || listingData.storageType || "Covered Shed",
-      processing_level: listingData.processing_level || listingData.condition || "Baled",
-      intended_use: listingData.intended_use || "Composting & Biomass",
+      moisture: listingData.moisture || "12%",
+      qualityGrade: listingData.qualityGrade || "Grade A",
       packaging: listingData.packaging || "Standard Packaging",
       harvestDate: listingData.harvestDate || new Date().toISOString().split("T")[0],
       expiryDate: listingData.expiryDate || "2027-03-01",
       pickupAvailability: listingData.pickupAvailability || "Immediate Pickup",
       loadingAssistance: listingData.loadingAssistance || "Yes",
-      storageType: listingData.storageType || listingData.storage_condition || "Covered Shed",
+      storageType: listingData.storageType || "Covered Shed",
       location: `${listingData.district || "District"}, ${listingData.state || "State"}`,
       district: listingData.district || "District",
       state: listingData.state || "State",
@@ -322,6 +327,9 @@ class Store {
   }
 
   addToCart(listing, quantity = null) {
+    if (this.getCurrentRole() !== "buyer") {
+      return false;
+    }
     if (!this.state.cart) this.state.cart = [];
     const qty = quantity !== null ? parseFloat(quantity) : listing.minOrderQty || 1;
     const existing = this.state.cart.find(item => item.listingId === listing.id);
@@ -816,126 +824,6 @@ class Store {
   // ==========================================
   getSustainabilityMetrics() {
     return deepClone(this.state.sustainability);
-  }
-
-  // ==========================================
-  // AGRIWASTE INTELLIGENCE ENGINE METHODS
-  // ==========================================
-  getListingIntelligence(listingId) {
-    const listing = this.getListingById(listingId);
-    if (!listing) return null;
-
-    const buyerProfiles = this.getUsers("buyer");
-    const quality = calculateQualityScore(listing);
-    const suitability = calculateSuitabilityScore(listing);
-    const recommendations = determineRecommendedApplications(listing);
-    const buyerMatches = findTopMatchesForListing(listing, buyerProfiles, 5);
-    const valueOpt = estimateWasteValue(listing);
-    const envImpact = calculateEnvironmentalImpact(listing.quantity || 1, listing.category);
-
-    return {
-      listing,
-      quality,
-      suitability,
-      recommendations,
-      buyerMatches,
-      valueOpt,
-      envImpact
-    };
-  }
-
-  getEnrichedListings(filters = {}) {
-    const listings = this.getListings(filters);
-    const buyerProfiles = this.getUsers("buyer");
-
-    return listings.map(l => {
-      const quality = calculateQualityScore(l);
-      const suitability = calculateSuitabilityScore(l);
-      const recommendations = determineRecommendedApplications(l);
-      const buyerMatches = findTopMatchesForListing(l, buyerProfiles, 3);
-      const valueOpt = estimateWasteValue(l);
-      const envImpact = calculateEnvironmentalImpact(l.quantity || 1, l.category);
-
-      return {
-        ...l,
-        quality,
-        suitability,
-        recommendations,
-        buyerMatches,
-        valueOpt,
-        envImpact
-      };
-    });
-  }
-
-  getBuyerMatchesForBuyer(buyerId = null) {
-    const currentRole = this.getCurrentRole();
-    const currentUser = this.getCurrentUser();
-    const targetUserId = buyerId || (currentRole === "buyer" ? currentUser.id : "usr-buyer-1");
-    const buyerProfile = this.getUserById(targetUserId) || currentUser;
-
-    const allListings = this.getListings();
-    return findTopListingsForBuyer(buyerProfile, allListings, 10);
-  }
-
-  getAggregatedSupplyOpportunities() {
-    const listings = this.getListings();
-    const buyerProfiles = this.getUsers("buyer");
-    const buyerReqs = buyerProfiles.map(b => ({
-      id: b.id,
-      name: b.name,
-      companyName: b.companyName || b.farmName || b.name,
-      preferredCategory: b.preferredCategory || "paddy-straw",
-      requiredQty: b.requiredQty || 10,
-      maxPrice: b.maxPrice || 3500
-    }));
-
-    return findAggregatedSupply(listings, buyerReqs);
-  }
-
-  getPlatformIntelligenceMetrics() {
-    const enrichedListings = this.getEnrichedListings({ includeAllStatuses: true });
-    let totalWSS = 0;
-    let totalQuality = 0;
-    let totalValueUplift = 0;
-    let totalCO2Avoided = 0;
-    const appCounts = {};
-
-    enrichedListings.forEach(item => {
-      totalWSS += item.suitability.wssScore;
-      totalQuality += item.quality.score;
-      totalValueUplift += item.valueOpt.valueUplift;
-      totalCO2Avoided += item.envImpact.co2AvoidedKg;
-
-      const topApp = item.recommendations[0]?.application_name || "Composting";
-      appCounts[topApp] = (appCounts[topApp] || 0) + 1;
-    });
-
-    const count = enrichedListings.length || 1;
-    const avgSuitability = Math.round(totalWSS / count);
-    const avgQuality = Math.round(totalQuality / count);
-
-    let mostRecommendedApp = "Mushroom Cultivation & Biomass Fuel";
-    let maxAppCount = 0;
-    Object.keys(appCounts).forEach(app => {
-      if (appCounts[app] > maxAppCount) {
-        maxAppCount = appCounts[app];
-        mostRecommendedApp = app;
-      }
-    });
-
-    const aggregationOpps = this.getAggregatedSupplyOpportunities();
-
-    return {
-      totalListingsAnalyzed: count,
-      avgSuitabilityScore: avgSuitability,
-      avgQualityScore: avgQuality,
-      mostRecommendedApp,
-      totalValueUpliftRs: totalValueUplift,
-      totalCO2AvoidedTons: (totalCO2Avoided / 1000).toFixed(1),
-      activeAggregationOpportunities: aggregationOpps.length,
-      aggregationOpportunities: aggregationOpps
-    };
   }
 
   // ==========================================

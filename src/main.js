@@ -2,8 +2,8 @@
  * AgriWaste Marketplace — Main Application Entry Point & Client Router
  */
 
-/* global Chart, confetti */
-
+import Chart from "chart.js/auto";
+import confetti from "canvas-confetti";
 import { store } from "./store/state.js";
 import { showToast } from "./components/Toast.js";
 import { renderNavbar } from "./components/Navbar.js";
@@ -31,13 +31,11 @@ import { renderSustainabilityPage } from "./pages/Sustainability.js";
 import { renderProfilePage } from "./pages/Profile.js";
 import { renderLoginPage } from "./pages/Login.js";
 import { renderRegisterPage } from "./pages/Register.js";
-import { renderIntelligencePage } from "./pages/Intelligence.js";
 
 // Services
 import { classifyAgriWasteImage, getAIAssistantResponse } from "./services/aiService.js";
 import { initializeMap, addListingMarkers } from "./services/mapService.js";
 import { exportToCSV, printTaxInvoice } from "./services/exportService.js";
-import { calculateQualityScore, calculateSuitabilityScore, estimateWasteValue, calculateEnvironmentalImpact, determineRecommendedApplications } from "./lib/server/wasteIntelligence.ts";
 
 class App {
   constructor() {
@@ -85,8 +83,6 @@ class App {
       pageHtml = renderHomePage();
     } else if (path === "/marketplace") {
       pageHtml = renderMarketplacePage(params);
-    } else if (path.startsWith("/intelligence")) {
-      pageHtml = renderIntelligencePage(params);
     } else if (path.startsWith("/waste/")) {
       const listingId = path.split("/waste/")[1];
       pageHtml = renderWasteDetailsPage(listingId);
@@ -104,13 +100,16 @@ class App {
     } else if (path === "/chat") {
       pageHtml = renderChatPage(params);
     } else if (path.startsWith("/farmer")) {
-      const subtab = path.replace("/farmer-", "").replace("/farmer/", "").replace("/farmer", "overview");
+      let subtab = path.replace(/^\/farmer-?/, "").replace(/^\//, "");
+      if (!subtab || subtab === "dashboard" || subtab === "farmer") subtab = "overview";
       pageHtml = renderFarmerDashboardPage(subtab);
     } else if (path.startsWith("/buyer")) {
-      const subtab = path.replace("/buyer-", "").replace("/buyer/", "").replace("/buyer", "overview");
+      let subtab = path.replace(/^\/buyer-?/, "").replace(/^\//, "");
+      if (!subtab || subtab === "dashboard" || subtab === "buyer") subtab = "overview";
       pageHtml = renderBuyerDashboardPage(subtab);
     } else if (path.startsWith("/admin")) {
-      const subtab = path.replace("/admin-", "").replace("/admin/", "").replace("/admin", "overview");
+      let subtab = path.replace(/^\/admin-?/, "").replace(/^\//, "");
+      if (!subtab || subtab === "dashboard" || subtab === "admin") subtab = "overview";
       pageHtml = renderAdminDashboardPage(subtab);
     } else if (path === "/sustainability") {
       pageHtml = renderSustainabilityPage();
@@ -154,16 +153,14 @@ class App {
       });
     }
 
-    document.querySelectorAll(".role-select-option, .btn-demo-login").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const targetRole = btn.dataset.role;
-        store.setCurrentRole(targetRole);
-        showToast(`Switched role to: ${targetRole.toUpperCase()}`, "success");
-        if (targetRole === "farmer") window.location.hash = "#farmer-dashboard";
-        else if (targetRole === "buyer") window.location.hash = "#buyer-dashboard";
-        else if (targetRole === "admin") window.location.hash = "#admin-dashboard";
+    const signoutBtn = document.getElementById("btn-user-signout");
+    if (signoutBtn) {
+      signoutBtn.addEventListener("click", () => {
+        store.logout();
+        showToast("Logged out successfully. You are now browsing as a guest.", "info");
+        window.location.hash = "#/";
       });
-    });
+    }
 
     // 2. AI Assistant Drawer Toggle
     const openAIBtn = document.getElementById("btn-open-ai-assistant");
@@ -180,6 +177,54 @@ class App {
         aiDrawer.style.display = "none";
       });
     }
+
+    // 3. Notifications Panel Toggle (Only open when clicked/touched)
+    const notifBtn = document.getElementById("btn-toggle-notifications");
+    const notifPanel = document.getElementById("notification-panel");
+    const closeNotifBtn = document.getElementById("btn-close-notif-panel");
+    const markAllReadBtn = document.getElementById("btn-mark-all-read");
+
+    if (notifBtn && notifPanel) {
+      notifBtn.addEventListener("click", e => {
+        e.stopPropagation();
+        const isOpen = notifPanel.style.display === "flex";
+        notifPanel.style.display = isOpen ? "none" : "flex";
+      });
+
+      if (closeNotifBtn) {
+        closeNotifBtn.addEventListener("click", e => {
+          e.stopPropagation();
+          notifPanel.style.display = "none";
+        });
+      }
+
+      // Close when touching/clicking anywhere outside
+      document.addEventListener("click", e => {
+        if (notifPanel && !notifPanel.contains(e.target) && !notifBtn.contains(e.target)) {
+          notifPanel.style.display = "none";
+        }
+      });
+    }
+
+    if (markAllReadBtn) {
+      markAllReadBtn.addEventListener("click", e => {
+        e.stopPropagation();
+        store.markAllNotificationsRead();
+        showToast("All notifications marked as read", "info");
+      });
+    }
+
+    document.querySelectorAll(".notif-item").forEach(item => {
+      item.addEventListener("click", () => {
+        const id = item.dataset.id;
+        const link = item.dataset.link;
+        store.markNotificationRead(id);
+        if (notifPanel) notifPanel.style.display = "none";
+        if (link && link !== "#") {
+          window.location.hash = link;
+        }
+      });
+    });
 
     // AI Form & Quick Queries
     const aiForm = document.getElementById("ai-query-form");
@@ -222,26 +267,6 @@ class App {
       });
     });
 
-    // 3. Notifications Panel Toggle
-    const notifBtn = document.getElementById("btn-toggle-notifications");
-    const notifPanel = document.getElementById("notification-panel");
-    if (notifBtn && notifPanel) {
-      notifBtn.addEventListener("click", e => {
-        e.stopPropagation();
-        notifPanel.style.display = notifPanel.style.display === "flex" ? "none" : "flex";
-      });
-      document.addEventListener("click", () => {
-        if (notifPanel) notifPanel.style.display = "none";
-      });
-    }
-
-    const markAllReadBtn = document.getElementById("btn-mark-all-read");
-    if (markAllReadBtn) {
-      markAllReadBtn.addEventListener("click", () => {
-        store.markAllNotificationsRead();
-        showToast("All notifications marked as read", "info");
-      });
-    }
 
     // 4. Hero Search
     const heroBtn = document.getElementById("btn-hero-search");
@@ -326,10 +351,16 @@ class App {
       });
     });
 
-    // 6. Quick Add to Cart & Buy Now
+    // 6. Quick Add to Cart & Buy Now (Strictly Buyer Exclusive)
     document.querySelectorAll(".btn-quick-add-cart").forEach(btn => {
       btn.addEventListener("click", e => {
         e.preventDefault();
+        const currentRole = store.getCurrentRole();
+        if (currentRole !== "buyer") {
+          showToast("Access Restricted: Only verified Industrial Buyers can purchase products. Please log in as Buyer.", "error");
+          return;
+        }
+
         const id = btn.dataset.id;
         const listing = store.getListingById(id);
         if (listing) {
@@ -358,6 +389,11 @@ class App {
 
     if (detailsAddCartBtn) {
       detailsAddCartBtn.addEventListener("click", () => {
+        const currentRole = store.getCurrentRole();
+        if (currentRole !== "buyer") {
+          showToast("Access Restricted: Only verified Industrial Buyers can purchase products. Please log in as Buyer.", "error");
+          return;
+        }
         const listingId = detailsAddCartBtn.dataset.id;
         const listing = store.getListingById(listingId);
         const qty = parseFloat(detailsQtyInput?.value) || listing.minOrderQty || 1;
@@ -368,6 +404,11 @@ class App {
 
     if (detailsBuyNowBtn) {
       detailsBuyNowBtn.addEventListener("click", () => {
+        const currentRole = store.getCurrentRole();
+        if (currentRole !== "buyer") {
+          showToast("Access Restricted: Only verified Industrial Buyers can purchase products. Please log in as Buyer.", "error");
+          return;
+        }
         const listingId = detailsBuyNowBtn.dataset.id;
         const listing = store.getListingById(listingId);
         const qty = parseFloat(detailsQtyInput?.value) || listing.minOrderQty || 1;
@@ -524,12 +565,6 @@ class App {
         const pincode = document.getElementById("input-listing-pincode")?.value;
         const desc = document.getElementById("input-listing-desc")?.value;
 
-        // Advanced optional fields
-        const harvest_age = document.getElementById("input-listing-age")?.value;
-        const contamination_level = document.getElementById("input-listing-contamination")?.value;
-        const processing_level = document.getElementById("input-listing-processing")?.value;
-        const intended_use = document.getElementById("input-listing-intended-use")?.value;
-
         const newListing = store.createListing({
           title,
           category,
@@ -538,10 +573,6 @@ class App {
           price,
           moisture,
           qualityGrade: grade,
-          harvest_age,
-          contamination_level,
-          processing_level,
-          intended_use,
           packaging: pkg,
           loadingAssistance: loading,
           storageType: storage,
@@ -553,74 +584,6 @@ class App {
 
         showToast("Your agricultural waste listing has been published!", "success");
         window.location.hash = `#waste/${newListing.id}`;
-      });
-    }
-
-    // 9.5 Intelligence Tab Navigation & Interactive Calculator
-    document.querySelectorAll(".btn-intel-tab").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const tab = btn.dataset.tab;
-        const { path, params } = this.parseHash();
-        params.tab = tab;
-        const qs = new URLSearchParams(params).toString();
-        window.location.hash = `#intelligence?${qs}`;
-      });
-    });
-
-    const intelSearchBtn = document.getElementById("btn-intel-search");
-    const intelSearchInput = document.getElementById("intel-search-input");
-    if (intelSearchBtn && intelSearchInput) {
-      intelSearchBtn.addEventListener("click", () => {
-        const q = encodeURIComponent(intelSearchInput.value.trim());
-        const { path, params } = this.parseHash();
-        params.search = q;
-        const qs = new URLSearchParams(params).toString();
-        window.location.hash = `#intelligence?${qs}`;
-      });
-    }
-
-    const calcForm = document.getElementById("calc-intel-form");
-    if (calcForm) {
-      calcForm.addEventListener("submit", e => {
-        e.preventDefault();
-        const cat = document.getElementById("calc-cat")?.value || "paddy-straw";
-        const qty = parseFloat(document.getElementById("calc-qty")?.value) || 15;
-        const moisture = document.getElementById("calc-moisture")?.value || "12%";
-        const contamination = document.getElementById("calc-contamination")?.value || "Low";
-        const age = document.getElementById("calc-age")?.value || 5;
-        const storage = document.getElementById("calc-storage")?.value || "Covered Shed";
-        const price = parseFloat(document.getElementById("calc-price")?.value) || 2500;
-
-        const sample = {
-          category: cat,
-          quantity: qty,
-          moisture,
-          contamination_level: contamination,
-          harvest_age: age,
-          storage_condition: storage,
-          price
-        };
-
-        const qRes = calculateQualityScore(sample);
-        const wssRes = calculateSuitabilityScore(sample);
-        const valRes = estimateWasteValue(sample);
-        const envRes = calculateEnvironmentalImpact(qty, cat);
-        const recApps = determineRecommendedApplications(sample);
-
-        const outBox = document.getElementById("calc-results-output");
-        if (outBox) {
-          outBox.classList.remove("hidden");
-          document.getElementById("res-quality-score").innerText = `${qRes.score}/100`;
-          document.getElementById("res-quality-grade").innerText = `Grade: ${qRes.grade}`;
-          document.getElementById("res-wss-score").innerText = `${wssRes.wssScore}/100`;
-          document.getElementById("res-wss-label").innerText = wssRes.categoryLabel;
-          document.getElementById("res-value-uplift").innerText = `+${valRes.roiIncreasePercent}% Uplift`;
-          document.getElementById("res-recommended-app").innerText = recApps[0]?.application_name || "Composting";
-
-          document.getElementById("res-quality-explanation").innerHTML = `<strong>Quality Formula Breakdown:</strong> ${qRes.explanation}`;
-          document.getElementById("res-wss-explanation").innerHTML = `<strong>Suitability Score (WSS):</strong> ${wssRes.explanation}`;
-          document.getElementById("res-env-explanation").innerHTML = `<strong>Environmental CO₂ Avoided:</strong> ${envRes.explanation}`;
-        }
       });
     }
 
@@ -774,13 +737,247 @@ class App {
       });
     }
 
+    // ==========================================
+    // Enhanced Login Page Interactive Logic
+    // ==========================================
+    const roleTabs = document.querySelectorAll(".btn-role-tab");
+    const loginEmailInput = document.getElementById("login-email");
+    const loginPhoneInput = document.getElementById("login-phone");
+    const personaBadgeIcon = document.getElementById("persona-badge-icon");
+    const personaBadgeTitle = document.getElementById("persona-badge-title");
+    const personaBadgeOrg = document.getElementById("persona-badge-org");
+    const personaBadgeAccess = document.getElementById("persona-badge-access");
+    const btnLoginText = document.getElementById("btn-login-text");
+
+    let activeSelectedRole = store.getCurrentRole() || "farmer";
+
+    if (roleTabs.length > 0) {
+      roleTabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+          const role = tab.dataset.role;
+          activeSelectedRole = role;
+          const email = tab.dataset.email;
+          const phone = tab.dataset.phone;
+          const name = tab.dataset.name;
+          const entity = tab.dataset.entity;
+
+          // Update active styles
+          roleTabs.forEach(t => {
+            const isTarget = t === tab;
+            t.classList.toggle("active-role-card", isTarget);
+            if (t.dataset.role === "farmer") {
+              t.style.background = isTarget ? "#f0fdf4" : "#ffffff";
+              t.style.border = isTarget ? "2px solid #16a34a" : "1.5px solid #e2e8f0";
+              t.style.boxShadow = isTarget ? "0 4px 12px rgba(22,163,74,0.12)" : "none";
+            } else if (t.dataset.role === "buyer") {
+              t.style.background = isTarget ? "#f0f9ff" : "#ffffff";
+              t.style.border = isTarget ? "2px solid #0284c7" : "1.5px solid #e2e8f0";
+              t.style.boxShadow = isTarget ? "0 4px 12px rgba(2,132,199,0.12)" : "none";
+            } else if (t.dataset.role === "admin") {
+              t.style.background = isTarget ? "#faf5ff" : "#ffffff";
+              t.style.border = isTarget ? "2px solid #7c3aed" : "1.5px solid #e2e8f0";
+              t.style.boxShadow = isTarget ? "0 4px 12px rgba(124,58,237,0.12)" : "none";
+            }
+          });
+
+          // Auto-fill fields
+          if (loginEmailInput) loginEmailInput.value = email;
+          if (loginPhoneInput) loginPhoneInput.value = phone;
+
+          // Update Persona Summary Card
+          if (personaBadgeTitle) personaBadgeTitle.textContent = `${name} (${role.toUpperCase()})`;
+          if (personaBadgeOrg) personaBadgeOrg.textContent = entity;
+          if (personaBadgeIcon) {
+            personaBadgeIcon.textContent = role === "farmer" ? "🧑‍🌾" : role === "buyer" ? "🏭" : "🛡️";
+          }
+          if (personaBadgeAccess) {
+            if (role === "farmer") {
+              personaBadgeAccess.textContent = "Direct Escrow Seller";
+              personaBadgeAccess.style.background = "#dcfce7";
+              personaBadgeAccess.style.color = "#15803d";
+            } else if (role === "buyer") {
+              personaBadgeAccess.textContent = "Verified Procurement Hub";
+              personaBadgeAccess.style.background = "#e0f2fe";
+              personaBadgeAccess.style.color = "#0369a1";
+            } else {
+              personaBadgeAccess.textContent = "Full System Compliance Admin";
+              personaBadgeAccess.style.background = "#f3e8ff";
+              personaBadgeAccess.style.color = "#7c3aed";
+            }
+          }
+
+          if (btnLoginText) {
+            btnLoginText.textContent = `Sign In as ${role === 'farmer' ? 'Farmer (Ramesh Patel)' : role === 'buyer' ? 'Buyer (AgroFeed)' : 'Admin (Dr. Amit Verma)'}`;
+          }
+
+          store.setCurrentRole(role);
+          showToast(`Persona loaded: ${name} (${role.toUpperCase()})`, "info");
+        });
+      });
+    }
+
+    // Toggle Password Visibility
+    const btnTogglePwd = document.getElementById("btn-toggle-pwd");
+    const loginPwdInput = document.getElementById("login-password");
+    if (btnTogglePwd && loginPwdInput) {
+      btnTogglePwd.addEventListener("click", () => {
+        if (loginPwdInput.type === "password") {
+          loginPwdInput.type = "text";
+          btnTogglePwd.textContent = "🙈";
+        } else {
+          loginPwdInput.type = "password";
+          btnTogglePwd.textContent = "👁️";
+        }
+      });
+    }
+
+    // Password strength reactive feedback
+    if (loginPwdInput) {
+      loginPwdInput.addEventListener("input", () => {
+        const val = loginPwdInput.value;
+        const bar = document.getElementById("pwd-strength-bar");
+        const txt = document.getElementById("pwd-strength-text");
+        if (!bar || !txt) return;
+
+        if (val.length === 0) {
+          bar.style.width = "0%";
+          txt.textContent = "Enter password";
+          txt.style.color = "#94a3b8";
+        } else if (val.length < 6) {
+          bar.style.width = "30%";
+          bar.style.background = "#ef4444";
+          txt.textContent = "Weak (Minimum 6 characters)";
+          txt.style.color = "#ef4444";
+        } else if (val.length < 10) {
+          bar.style.width = "70%";
+          bar.style.background = "#f59e0b";
+          txt.textContent = "Medium Security";
+          txt.style.color = "#d97706";
+        } else {
+          bar.style.width = "100%";
+          bar.style.background = "#22c55e";
+          txt.textContent = "256-Bit Strong Encrypted";
+          txt.style.color = "#16a34a";
+        }
+      });
+    }
+
+    // Auth Tabs Switcher (Email vs Kisan OTP)
+    const tabAuthEmail = document.getElementById("tab-auth-email");
+    const tabAuthOtp = document.getElementById("tab-auth-otp");
+    const emailForm = document.getElementById("login-form");
+    const otpForm = document.getElementById("login-otp-form");
+
+    if (tabAuthEmail && tabAuthOtp && emailForm && otpForm) {
+      tabAuthEmail.addEventListener("click", () => {
+        tabAuthEmail.style.borderBottom = "2.5px solid #16a34a";
+        tabAuthEmail.style.color = "#15803d";
+        tabAuthEmail.style.fontWeight = "800";
+        tabAuthOtp.style.borderBottom = "2.5px solid transparent";
+        tabAuthOtp.style.color = "#64748b";
+        tabAuthOtp.style.fontWeight = "700";
+        emailForm.style.display = "block";
+        otpForm.style.display = "none";
+      });
+
+      tabAuthOtp.addEventListener("click", () => {
+        tabAuthOtp.style.borderBottom = "2.5px solid #16a34a";
+        tabAuthOtp.style.color = "#15803d";
+        tabAuthOtp.style.fontWeight = "800";
+        tabAuthEmail.style.borderBottom = "2.5px solid transparent";
+        tabAuthEmail.style.color = "#64748b";
+        tabAuthEmail.style.fontWeight = "700";
+        otpForm.style.display = "block";
+        emailForm.style.display = "none";
+      });
+    }
+
+    // OTP Send Demo Simulation
+    const btnSendOtp = document.getElementById("btn-send-otp");
+    if (btnSendOtp) {
+      btnSendOtp.addEventListener("click", () => {
+        const phone = document.getElementById("login-phone")?.value || "+91 98765 43210";
+        showToast(`OTP Code sent to ${phone}: 123456 (Valid for 10m)`, "success");
+        btnSendOtp.disabled = true;
+        let countdown = 30;
+        btnSendOtp.textContent = `Resend in ${countdown}s`;
+        const interval = setInterval(() => {
+          countdown--;
+          if (countdown > 0) {
+            btnSendOtp.textContent = `Resend in ${countdown}s`;
+          } else {
+            clearInterval(interval);
+            btnSendOtp.disabled = false;
+            btnSendOtp.textContent = "Send OTP";
+          }
+        }, 1000);
+      });
+    }
+
+    // OTP digit auto focus navigation
+    const otpDigits = document.querySelectorAll(".otp-digit");
+    otpDigits.forEach((digit, idx) => {
+      digit.addEventListener("keyup", e => {
+        if (e.key >= "0" && e.key <= "9") {
+          if (idx < otpDigits.length - 1) {
+            otpDigits[idx + 1].focus();
+          }
+        } else if (e.key === "Backspace") {
+          if (idx > 0 && !digit.value) {
+            otpDigits[idx - 1].focus();
+          }
+        }
+      });
+    });
+
+    // Passkey WebAuthn Login Simulation
+    const btnWebAuthn = document.getElementById("btn-webauthn-login");
+    if (btnWebAuthn) {
+      btnWebAuthn.addEventListener("click", () => {
+        showToast("Biometric / Security Key Verified! Signing in...", "success");
+        setTimeout(() => {
+          store.setCurrentRole(activeSelectedRole);
+          if (activeSelectedRole === "farmer") window.location.hash = "#farmer-dashboard";
+          else if (activeSelectedRole === "buyer") window.location.hash = "#buyer-dashboard";
+          else window.location.hash = "#admin-dashboard";
+        }, 600);
+      });
+    }
+
+    // Forgot Password Trigger
+    const btnForgot = document.getElementById("btn-forgot-pwd");
+    if (btnForgot) {
+      btnForgot.addEventListener("click", e => {
+        e.preventDefault();
+        const email = document.getElementById("login-email")?.value || "ramesh@greenfarmagro.in";
+        showToast(`Password reset link and OTP sent to ${email}`, "info");
+      });
+    }
+
     // Login & Register Form Submissions
     const loginForm = document.getElementById("login-form");
     if (loginForm) {
       loginForm.addEventListener("submit", e => {
         e.preventDefault();
-        showToast("Signed in successfully!", "success");
-        window.location.hash = "#farmer-dashboard";
+        store.setCurrentRole(activeSelectedRole);
+        const user = store.getCurrentUser();
+        showToast(`Welcome back, ${user?.name || 'Verified User'}! Successfully signed in.`, "success");
+        if (activeSelectedRole === "farmer") window.location.hash = "#farmer-dashboard";
+        else if (activeSelectedRole === "buyer") window.location.hash = "#buyer-dashboard";
+        else if (activeSelectedRole === "admin") window.location.hash = "#admin-dashboard";
+      });
+    }
+
+    const loginOtpForm = document.getElementById("login-otp-form");
+    if (loginOtpForm) {
+      loginOtpForm.addEventListener("submit", e => {
+        e.preventDefault();
+        store.setCurrentRole(activeSelectedRole);
+        const user = store.getCurrentUser();
+        showToast(`Mobile OTP Verified! Welcome ${user?.name || 'Farmer'}.`, "success");
+        if (activeSelectedRole === "farmer") window.location.hash = "#farmer-dashboard";
+        else if (activeSelectedRole === "buyer") window.location.hash = "#buyer-dashboard";
+        else if (activeSelectedRole === "admin") window.location.hash = "#admin-dashboard";
       });
     }
 
@@ -792,6 +989,99 @@ class App {
         store.setCurrentRole(role);
         showToast("Account created successfully!", "success");
         window.location.hash = role === "farmer" ? "#farmer-dashboard" : "#buyer-dashboard";
+      });
+    }
+
+    // ==========================================
+    // Dashboard & Admin Action Handlers
+    // ==========================================
+    // 1. Delete Listing
+    document.querySelectorAll(".btn-delete-listing").forEach(btn => {
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        e.stopPropagation();
+        const id = btn.dataset.id;
+        if (confirm("Are you sure you want to remove this agricultural waste listing?")) {
+          store.deleteListing(id);
+          showToast("Listing deleted successfully.", "info");
+        }
+      });
+    });
+
+    // 2. Admin Approve Listing
+    document.querySelectorAll(".btn-admin-approve").forEach(btn => {
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        const id = btn.dataset.id;
+        store.approveListing(id);
+        showToast("Listing approved & published to national exchange!", "success");
+      });
+    });
+
+    // 3. Admin Reject Listing
+    document.querySelectorAll(".btn-admin-reject").forEach(btn => {
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        const id = btn.dataset.id;
+        const reason = prompt("Enter quality specification reason for rejection:", "Moisture exceeds 18% threshold");
+        if (reason) {
+          store.rejectListing(id, reason);
+          showToast("Listing rejected and revision notice sent to farmer.", "info");
+        }
+      });
+    });
+
+    // 4. Toggle User Suspension
+    document.querySelectorAll(".btn-toggle-suspend").forEach(btn => {
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        const id = btn.dataset.id;
+        store.suspendUser(id);
+        showToast("Stakeholder account access updated.", "info");
+      });
+    });
+
+    // 5. Admin Resolve Dispute
+    document.querySelectorAll(".btn-resolve-dispute").forEach(btn => {
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        const id = btn.dataset.id;
+        store.resolveComplaint(id, "Arbitration complete: 100% Escrow released to aggrieved party.", "Resolved");
+        showToast("Dispute arbitration ticket marked as Resolved.", "success");
+      });
+    });
+
+    // 6. Farmer Mark Order Ready
+    document.querySelectorAll(".btn-farmer-accept-order").forEach(btn => {
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        const id = btn.dataset.id;
+        store.updateOrderStatus(id, "Pickup Scheduled", "Biomass baled & ready at farm shed");
+        showToast(`Order #${id} marked as Baled & Scheduled for Transport!`, "success");
+      });
+    });
+
+    // 7. Buyer Confirm Delivery & Release Escrow
+    document.querySelectorAll(".btn-buyer-confirm-delivery").forEach(btn => {
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        const id = btn.dataset.id;
+        store.updateOrderStatus(id, "Completed", "Delivery verified at plant weighbridge. Escrow released.");
+        if (typeof confetti === "function") {
+          confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+        }
+        showToast(`Delivery confirmed for Order #${id}! Escrow funds released to farmer.`, "success");
+      });
+    });
+
+    // 8. Farmer Request Escrow Payout
+    const btnRequestPayout = document.getElementById("btn-request-payout");
+    if (btnRequestPayout) {
+      btnRequestPayout.addEventListener("click", () => {
+        if (typeof confetti === "function") {
+          confetti({ particleCount: 60, spread: 60, origin: { y: 0.7 } });
+        }
+        showToast("Payout Request Initiated: ₹2,84,500 transferred via IMPS/DBT to linked SBI account.", "success");
       });
     }
   }

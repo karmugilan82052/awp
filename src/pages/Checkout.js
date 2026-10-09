@@ -6,6 +6,24 @@ import { store } from "../store/state.js";
 import { formatINR } from "../utils/formatters.js";
 
 export function renderCheckoutPage() {
+  const currentRole = store.getCurrentRole();
+  if (currentRole !== "buyer") {
+    return `
+      <div style="padding:80px 20px; text-align:center; font-family:'Plus Jakarta Sans', sans-serif;">
+        <div style="max-width:600px; margin:0 auto; background:#ffffff; border:1px solid #e2ece2; border-radius:24px; padding:50px 30px; box-shadow:0 10px 30px rgba(15,61,33,0.06);">
+          <div style="font-size:56px; margin-bottom:16px;">🔒</div>
+          <h2 style="font-family:'Outfit', sans-serif; font-size:26px; font-weight:800; color:#0f172a; margin-bottom:10px;">Buyer Authorization Required</h2>
+          <p style="font-size:15px; color:#64748b; margin-bottom:24px; line-height:1.6;">
+            Only verified Industrial Buyers and Procurement Managers can place orders and fund the Escrow Vault.
+          </p>
+          <a href="#login" style="background:#16a34a; color:white; padding:12px 26px; border-radius:10px; text-decoration:none; font-weight:700; font-size:15px; display:inline-block;">
+            Sign In with Buyer Account →
+          </a>
+        </div>
+      </div>
+    `;
+  }
+
   const calc = store.getCartCalculations();
   const currentUser = store.getCurrentUser();
 
