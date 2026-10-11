@@ -14,13 +14,13 @@ export function renderSustainabilityPage() {
         
         <!-- Header -->
         <div style="text-align:center; margin-bottom:40px;">
-          <div style="display:inline-flex; align-items:center; gap:6px; background:#dcfce7; color:#15803d; font-size:12px; font-weight:800; padding:4px 14px; border-radius:20px; margin-bottom:10px;">
+          <div style="display:inline-flex; align-items:center; gap:6px; background:#dcfce7; color:#15803d; font-size:14px; font-weight:800; padding:4px 14px; border-radius:20px; margin-bottom:10px;">
             <span>🌱</span> National Circular Bioeconomy Accounting
           </div>
-          <h1 style="font-family:'Outfit', sans-serif; font-size:36px; font-weight:800; color:#0f172a; margin:0;">
+          <h1 style="font-family:'Outfit', sans-serif; font-size:41px; font-weight:800; color:#0f172a; margin:0;">
             Sustainability & Carbon Burning Mitigation Hub
           </h1>
-          <p style="font-size:15px; color:#64748b; max-width:700px; margin:8px auto 0 auto; line-height:1.6;">
+          <p style="font-size:18px; color:#64748b; max-width:700px; margin:8px auto 0 auto; line-height:1.6;">
             Quantifying the environmental and economic impact of redirecting agricultural residues from open field burning to industrial bio-energy, paper, and compost products.
           </p>
         </div>
@@ -65,10 +65,10 @@ export function renderSustainabilityPage() {
           
           <div style="background:#ffffff; border:1px solid #e2ece2; border-radius:18px; padding:24px; box-shadow:0 2px 10px rgba(15,61,33,0.04);">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-              <h3 style="font-family:'Outfit', sans-serif; font-size:18px; font-weight:700; color:#0f172a; margin:0;">
+              <h3 style="font-family:'Outfit', sans-serif; font-size:21px; font-weight:700; color:#0f172a; margin:0;">
                 🔥 Stubble Burning Incidents Avoided (Monthly)
               </h3>
-              <span style="font-size:12px; color:#16a34a; font-weight:700;">Northern & Southern Agri Belts</span>
+              <span style="font-size:14px; color:#16a34a; font-weight:700;">Northern & Southern Agri Belts</span>
             </div>
             <div style="height:260px; position:relative;">
               <canvas id="sustainability-burning-chart"></canvas>
@@ -77,10 +77,10 @@ export function renderSustainabilityPage() {
 
           <div style="background:#ffffff; border:1px solid #e2ece2; border-radius:18px; padding:24px; box-shadow:0 2px 10px rgba(15,61,33,0.04);">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-              <h3 style="font-family:'Outfit', sans-serif; font-size:18px; font-weight:700; color:#0f172a; margin:0;">
+              <h3 style="font-family:'Outfit', sans-serif; font-size:21px; font-weight:700; color:#0f172a; margin:0;">
                 ♻️ Bio-Product Transformation Split
               </h3>
-              <span style="font-size:12px; color:#64748b;">Industrial Destination</span>
+              <span style="font-size:14px; color:#64748b;">Industrial Destination</span>
             </div>
             <div style="height:260px; position:relative;">
               <canvas id="sustainability-split-chart"></canvas>
@@ -91,10 +91,10 @@ export function renderSustainabilityPage() {
 
         <!-- State-Wise Environmental Mitigation Leaderboard -->
         <div style="background:#ffffff; border:1px solid #e2ece2; border-radius:18px; padding:28px; box-shadow:0 2px 10px rgba(15,61,33,0.04);">
-          <h3 style="font-family:'Outfit', sans-serif; font-size:20px; font-weight:700; color:#0f172a; margin-bottom:8px;">
+          <h3 style="font-family:'Outfit', sans-serif; font-size:23px; font-weight:700; color:#0f172a; margin-bottom:8px;">
             🇮🇳 State-wise Agricultural Waste Valorization Leaderboard
           </h3>
-          <p style="font-size:13px; color:#64748b; margin-bottom:20px;">
+          <p style="font-size:15px; color:#64748b; margin-bottom:20px;">
             Top states leading the transition to clean biomass exchange and zero open burning:
           </p>
 
@@ -102,38 +102,38 @@ export function renderSustainabilityPage() {
             
             <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:14px; padding:18px;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <strong style="font-size:16px; color:#14532d;">1. Punjab & Haryana</strong>
-                <span style="font-size:11px; background:#16a34a; color:white; font-weight:800; padding:2px 8px; border-radius:10px;">Leader</span>
+                <strong style="font-size:19px; color:#14532d;">1. Cauvery Delta (Thanjavur & Tiruvarur)</strong>
+                <span style="font-size:13px; background:#16a34a; color:white; font-weight:800; padding:2px 8px; border-radius:10px;">Leader</span>
               </div>
-              <span style="font-size:22px; font-weight:800; color:#16a34a; display:block;">9,450 Tons</span>
-              <p style="font-size:12px; color:#4b6354; margin:4px 0 0 0;">Paddy straw & wheat bhusa redirected to bio-pellets and bio-CNG.</p>
+              <span style="font-size:25px; font-weight:800; color:#16a34a; display:block;">9,450 Tons</span>
+              <p style="font-size:14px; color:#4b6354; margin:4px 0 0 0;">Paddy straw and rice husk redirected to bio-pellets and bio-CNG.</p>
             </div>
 
             <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:18px;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <strong style="font-size:16px; color:#0f172a;">2. Maharashtra</strong>
-                <span style="font-size:11px; background:#e2e8f0; color:#475569; font-weight:800; padding:2px 8px; border-radius:10px;">#2</span>
+                <strong style="font-size:19px; color:#0f172a;">2. Kongu Region (Coimbatore, Erode & Tiruppur)</strong>
+                <span style="font-size:13px; background:#e2e8f0; color:#475569; font-weight:800; padding:2px 8px; border-radius:10px;">#2</span>
               </div>
-              <span style="font-size:22px; font-weight:800; color:#0f172a; display:block;">6,800 Tons</span>
-              <p style="font-size:12px; color:#64748b; margin:4px 0 0 0;">Sugarcane bagasse & cotton stalk supplied to boiler cogeneration.</p>
+              <span style="font-size:25px; font-weight:800; color:#0f172a; display:block;">6,800 Tons</span>
+              <p style="font-size:14px; color:#64748b; margin:4px 0 0 0;">Coconut coir pith, bagasse & cotton stalks supplied to boilers.</p>
             </div>
 
             <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:18px;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <strong style="font-size:16px; color:#0f172a;">3. Tamil Nadu & Kerala</strong>
-                <span style="font-size:11px; background:#e2e8f0; color:#475569; font-weight:800; padding:2px 8px; border-radius:10px;">#3</span>
+                <strong style="font-size:19px; color:#0f172a;">3. Southern Belt (Madurai, Theni & Dindigul)</strong>
+                <span style="font-size:13px; background:#e2e8f0; color:#475569; font-weight:800; padding:2px 8px; border-radius:10px;">#3</span>
               </div>
-              <span style="font-size:22px; font-weight:800; color:#0f172a; display:block;">5,600 Tons</span>
-              <p style="font-size:12px; color:#64748b; margin:4px 0 0 0;">Coconut shells & banana pseudo-stems for activated carbon & eco-fiber.</p>
+              <span style="font-size:25px; font-weight:800; color:#0f172a; display:block;">5,600 Tons</span>
+              <p style="font-size:14px; color:#64748b; margin:4px 0 0 0;">Banana pseudo-stems, compost & manure for organic farming.</p>
             </div>
 
             <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:18px;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <strong style="font-size:16px; color:#0f172a;">4. Gujarat & Rajasthan</strong>
-                <span style="font-size:11px; background:#e2e8f0; color:#475569; font-weight:800; padding:2px 8px; border-radius:10px;">#4</span>
+                <strong style="font-size:19px; color:#0f172a;">4. Coastal & Industrial Zone (Thoothukudi & Cuddalore)</strong>
+                <span style="font-size:13px; background:#e2e8f0; color:#475569; font-weight:800; padding:2px 8px; border-radius:10px;">#4</span>
               </div>
-              <span style="font-size:22px; font-weight:800; color:#0f172a; display:block;">4,100 Tons</span>
-              <p style="font-size:12px; color:#64748b; margin:4px 0 0 0;">Groundnut shells & mustard straw utilized for briquettes & bio-coal.</p>
+              <span style="font-size:25px; font-weight:800; color:#0f172a; display:block;">4,100 Tons</span>
+              <p style="font-size:14px; color:#64748b; margin:4px 0 0 0;">Coconut shells for activated carbon and groundnut shells for bio-coal.</p>
             </div>
 
           </div>

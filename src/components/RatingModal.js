@@ -12,20 +12,20 @@ export function renderRatingModal(order) {
         
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid #f0f6f0; padding-bottom:12px;">
           <div>
-            <h3 style="font-family:'Outfit', sans-serif; font-size:18px; font-weight:700; color:#0f172a; margin:0;">
+            <h3 style="font-family:'Outfit', sans-serif; font-size:21px; font-weight:700; color:#0f172a; margin:0;">
               Rate & Review Seller
             </h3>
-            <span style="font-size:12px; color:#64748b;">Order: ${order.id} • ${order.listingTitle}</span>
+            <span style="font-size:14px; color:#64748b;">Order: ${order.id} • ${order.listingTitle}</span>
           </div>
-          <button id="btn-close-rating-modal" style="background:none; border:none; font-size:22px; color:#64748b; cursor:pointer;">✕</button>
+          <button id="btn-close-rating-modal" style="background:none; border:none; font-size:25px; color:#64748b; cursor:pointer;">✕</button>
         </div>
 
         <form id="rating-form" data-order-id="${order.id}" data-seller-id="${order.seller.id}" data-seller-name="${order.seller.name}">
           
           <!-- Overall Rating -->
           <div style="text-align:center; margin-bottom:20px; background:#f8fafc; padding:16px; border-radius:12px;">
-            <label style="display:block; font-size:13px; font-weight:700; color:#0f172a; margin-bottom:8px;">Overall Experience Rating</label>
-            <div id="star-rating-selector" style="font-size:32px; color:#eab308; cursor:pointer; letter-spacing:4px;">
+            <label style="display:block; font-size:15px; font-weight:700; color:#0f172a; margin-bottom:8px;">Overall Experience Rating</label>
+            <div id="star-rating-selector" style="font-size:37px; color:#eab308; cursor:pointer; letter-spacing:4px;">
               <span class="star-btn" data-val="1">★</span>
               <span class="star-btn" data-val="2">★</span>
               <span class="star-btn" data-val="3">★</span>
@@ -36,7 +36,7 @@ export function renderRatingModal(order) {
           </div>
 
           <!-- Multi-Criteria Ratings -->
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; font-size:12px;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; font-size:14px;">
             <div>
               <label style="font-weight:600; color:#475569; display:block; margin-bottom:4px;">Biomass Quality</label>
               <select id="input-quality-rating" style="width:100%; padding:6px 10px; border:1px solid #cbd5e1; border-radius:6px;">
@@ -57,11 +57,11 @@ export function renderRatingModal(order) {
 
           <!-- Written Review -->
           <div style="margin-bottom:20px;">
-            <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:6px;">Detailed Feedback</label>
-            <textarea id="input-review-text" rows="3" placeholder="Describe the waste condition, moisture level, loading assistance, and overall satisfaction..." style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:'Plus Jakarta Sans', sans-serif; outline:none;"></textarea>
+            <label style="display:block; font-size:14px; font-weight:700; color:#475569; margin-bottom:6px;">Detailed Feedback</label>
+            <textarea id="input-review-text" rows="3" placeholder="Describe the waste condition, moisture level, loading assistance, and overall satisfaction..." style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:15px; font-family:'Plus Jakarta Sans', sans-serif; outline:none;"></textarea>
           </div>
 
-          <button type="submit" style="width:100%; background:#16a34a; color:white; border:none; padding:12px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer;">
+          <button type="submit" style="width:100%; background:#16a34a; color:white; border:none; padding:12px; border-radius:10px; font-size:17px; font-weight:700; cursor:pointer;">
             Submit Review & Rating
           </button>
         </form>

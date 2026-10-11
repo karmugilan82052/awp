@@ -17,55 +17,62 @@ export function renderNavbar(currentPath = "/") {
   const isBuyer = currentRole === "buyer";
   const isAdmin = currentRole === "admin";
 
+  let displayName = "User";
+  if (currentUser?.name) {
+    displayName = currentUser.name.startsWith("Dr.")
+      ? currentUser.name.split(" ").slice(0, 2).join(" ")
+      : currentUser.name.split(" ")[0];
+  }
+
   return `
-    <header class="main-header" style="position:sticky; top:0; z-index:1000; background:rgba(255, 255, 255, 0.96); backdrop-filter:blur(12px); border-bottom:1px solid #e2ece2; box-shadow:0 2px 10px rgba(15,61,33,0.04);">
-      <div class="container" style="max-width:1380px; margin:0 auto; padding:0 20px; height:74px; display:flex; align-items:center; justify-content:space-between; gap:16px;">
+    <header class="main-header" style="position:sticky; top:0; z-index:1000; width:100%; background:#ffffff; border-bottom:1.5px solid #e2ece2; box-shadow:0 2px 12px rgba(15,61,33,0.05); margin:0; padding:0;">
+      <div class="container" style="max-width:1440px; margin:0 auto; padding:0 20px; min-height:78px; display:flex; align-items:center; justify-content:space-between; gap:14px; width:100%; box-sizing:border-box;">
         
         <!-- Logo -->
-        <a href="#/" class="brand-logo" style="display:flex; align-items:center; gap:14px; text-decoration:none;">
-          <div style="background:linear-gradient(135deg, #16a34a, #15803d); width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; font-size:24px; box-shadow:0 4px 12px rgba(22,163,74,0.3);">
+        <a href="#/" class="brand-logo" style="display:flex; align-items:center; gap:12px; text-decoration:none; flex-shrink:0;">
+          <div style="background:linear-gradient(135deg, #16a34a, #15803d); width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; font-size:26px; box-shadow:0 3px 10px rgba(22,163,74,0.25); flex-shrink:0;">
             🌾
           </div>
-          <div>
-            <span style="font-family:'Outfit', sans-serif; font-weight:800; font-size:23px; color:#0f3d21; letter-spacing:-0.5px; display:block; line-height:1.1;">AgriWaste</span>
-            <span style="font-size:12.5px; font-weight:700; color:#16a34a; letter-spacing:0.5px; text-transform:uppercase;">Circular Bio-Exchange</span>
+          <div style="display:flex; flex-direction:column; justify-content:center;">
+            <span style="font-family:'Outfit', sans-serif; font-weight:800; font-size:26px; color:#0f3d21; letter-spacing:-0.5px; line-height:1.15; display:block;">AgriWaste</span>
+            <span style="font-size:13.5px; font-weight:700; color:#16a34a; letter-spacing:0.5px; text-transform:uppercase; line-height:1.2; display:block;">Circular Bio-Exchange</span>
           </div>
         </a>
 
-        <!-- Desktop Navigation Links (Only 4 core options) -->
-        <nav class="desktop-nav" style="display:flex; align-items:center; gap:8px;">
-          <a href="#/" class="nav-link ${currentPath === "/" ? "active" : ""}" style="padding:9px 16px; border-radius:8px; font-size:16px; font-weight:700; color:${currentPath === "/" ? "#16a34a" : "#334155"}; transition:all 0.2s; text-decoration:none !important; font-family:'Plus Jakarta Sans', sans-serif;">Home</a>
-          <a href="#marketplace" class="nav-link ${currentPath.startsWith("/marketplace") ? "active" : ""}" style="padding:9px 16px; border-radius:8px; font-size:16px; font-weight:700; color:${currentPath.startsWith("/marketplace") ? "#16a34a" : "#334155"}; transition:all 0.2s; text-decoration:none !important; font-family:'Plus Jakarta Sans', sans-serif;">Marketplace</a>
+        <!-- Desktop Navigation Links -->
+        <nav class="desktop-nav" style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+          <a href="#/" class="nav-link ${currentPath === "/" ? "active" : ""}" style="padding:9px 16px; border-radius:8px; font-size:18px; font-weight:700; color:${currentPath === "/" ? "#16a34a" : "#334155"}; transition:all 0.2s; text-decoration:none !important; font-family:'Plus Jakarta Sans', sans-serif;">Home</a>
+          <a href="#marketplace" class="nav-link ${currentPath.startsWith("/marketplace") ? "active" : ""}" style="padding:9px 16px; border-radius:8px; font-size:18px; font-weight:700; color:${currentPath.startsWith("/marketplace") ? "#16a34a" : "#334155"}; transition:all 0.2s; text-decoration:none !important; font-family:'Plus Jakarta Sans', sans-serif;">Marketplace</a>
           
-          <a href="#sell-waste" class="nav-link ${currentPath === "/sell-waste" ? "active" : ""}" style="padding:9px 16px; border-radius:8px; font-size:16px; font-weight:700; color:#16a34a; background:#f0fdf4; border:1px solid #bbf7d0; display:flex; align-items:center; gap:6px; text-decoration:none !important; font-family:'Plus Jakarta Sans', sans-serif;">
+          <a href="#sell-waste" class="nav-link ${currentPath === "/sell-waste" ? "active" : ""}" style="padding:9px 16px; border-radius:8px; font-size:18px; font-weight:700; color:#16a34a; background:#f0fdf4; border:1px solid #bbf7d0; display:flex; align-items:center; gap:6px; text-decoration:none !important; font-family:'Plus Jakarta Sans', sans-serif;">
             <span>+</span> Sell Agri Waste
           </a>
 
-          <a href="#sustainability" class="nav-link ${currentPath === "/sustainability" ? "active" : ""}" style="padding:9px 16px; border-radius:8px; font-size:16px; font-weight:700; color:${currentPath === "/sustainability" ? "#16a34a" : "#334155"}; text-decoration:none !important; font-family:'Plus Jakarta Sans', sans-serif;">🌱 Impact</a>
+          <a href="#sustainability" class="nav-link ${currentPath === "/sustainability" ? "active" : ""}" style="padding:9px 16px; border-radius:8px; font-size:18px; font-weight:700; color:${currentPath === "/sustainability" ? "#16a34a" : "#334155"}; text-decoration:none !important; font-family:'Plus Jakarta Sans', sans-serif;">🌱 Impact</a>
         </nav>
 
         <!-- Right Utilities -->
-        <div style="display:flex; align-items:center; gap:12px;">
+        <div style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
 
           <!-- AI Smart Assistant Button -->
-          <button id="btn-open-ai-assistant" class="btn-ai-glow" style="display:flex; align-items:center; gap:8px; background:linear-gradient(135deg, #10b981, #059669); color:white; border:none; padding:9px 15px; border-radius:20px; font-size:14px; font-weight:700; cursor:pointer; box-shadow:0 0 15px rgba(16,185,129,0.35);">
-            <span style="font-size:16px;">✨</span> AI Assistant
+          <button id="btn-open-ai-assistant" class="btn-ai-glow" style="display:flex; align-items:center; gap:6px; background:linear-gradient(135deg, #10b981, #059669); color:white; border:none; padding:9px 16px; border-radius:20px; font-size:16px; font-weight:700; cursor:pointer; box-shadow:0 0 12px rgba(16,185,129,0.3); font-family:'Plus Jakarta Sans', sans-serif;">
+            <span style="font-size:18px;">✨</span> AI Assistant
           </button>
 
           ${
             isLoggedIn && currentUser
               ? `
             <!-- Chat Inbox -->
-            <a href="#chat" title="Messages" style="position:relative; width:44px; height:44px; border-radius:10px; background:#f8fafc; border:1.5px solid #e2e8f0; display:flex; align-items:center; justify-content:center; color:#334155; font-size:20px; text-decoration:none;">
+            <a href="#chat" title="Messages" style="position:relative; width:40px; height:40px; border-radius:10px; background:#f8fafc; border:1.5px solid #e2e8f0; display:flex; align-items:center; justify-content:center; color:#334155; font-size:20px; text-decoration:none;">
               💬
             </a>
 
             <!-- Notifications Bell -->
-            <button id="btn-toggle-notifications" title="Notifications" style="position:relative; width:44px; height:44px; border-radius:10px; background:#f8fafc; border:1.5px solid #e2e8f0; display:flex; align-items:center; justify-content:center; color:#334155; font-size:20px; cursor:pointer;">
+            <button id="btn-toggle-notifications" title="Notifications" style="position:relative; width:40px; height:40px; border-radius:10px; background:#f8fafc; border:1.5px solid #e2e8f0; display:flex; align-items:center; justify-content:center; color:#334155; font-size:20px; cursor:pointer;">
               🔔
               ${
                 unreadNotifsCount > 0
-                  ? `<span style="position:absolute; top:-5px; right:-5px; background:#dc2626; color:white; font-size:11px; font-weight:800; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white;">${unreadNotifsCount}</span>`
+                  ? `<span style="position:absolute; top:-4px; right:-4px; background:#dc2626; color:white; font-size:12px; font-weight:800; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white;">${unreadNotifsCount}</span>`
                   : ""
               }
             </button>
@@ -74,11 +81,11 @@ export function renderNavbar(currentPath = "/") {
             ${
               isBuyer
                 ? `
-              <a href="#cart" title="Shopping Cart" style="position:relative; width:44px; height:44px; border-radius:10px; background:#f8fafc; border:1.5px solid #e2e8f0; display:flex; align-items:center; justify-content:center; color:#334155; font-size:20px; text-decoration:none;">
+              <a href="#cart" title="Shopping Cart" style="position:relative; width:40px; height:40px; border-radius:10px; background:#f8fafc; border:1.5px solid #e2e8f0; display:flex; align-items:center; justify-content:center; color:#334155; font-size:20px; text-decoration:none;">
                 🛒
                 ${
                   cartItemsCount > 0
-                    ? `<span style="position:absolute; top:-5px; right:-5px; background:#16a34a; color:white; font-size:11px; font-weight:800; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white;">${cartItemsCount}</span>`
+                    ? `<span style="position:absolute; top:-4px; right:-4px; background:#16a34a; color:white; font-size:12px; font-weight:800; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white;">${cartItemsCount}</span>`
                     : ""
                 }
               </a>
@@ -88,13 +95,13 @@ export function renderNavbar(currentPath = "/") {
 
             <!-- User Profile Dropdown Menu -->
             <div class="role-switcher-wrapper" style="position:relative;">
-              <button id="btn-role-dropdown" style="display:flex; align-items:center; gap:10px; padding:8px 14px; background:#f1f5f9; border:1.5px solid #cbd5e1; border-radius:12px; cursor:pointer; font-family:'Plus Jakarta Sans', sans-serif;">
-                <div style="width:34px; height:34px; border-radius:50%; background:${isFarmer ? "#16a34a" : isBuyer ? "#0284c7" : "#7c3aed"}; color:white; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:800; font-family:'Outfit', sans-serif; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+              <button id="btn-role-dropdown" style="display:flex; align-items:center; gap:8px; padding:6px 12px; background:#f1f5f9; border:1.5px solid #cbd5e1; border-radius:10px; cursor:pointer; font-family:'Plus Jakarta Sans', sans-serif;">
+                <div style="width:30px; height:30px; border-radius:50%; background:${isFarmer ? "#16a34a" : isBuyer ? "#0284c7" : "#7c3aed"}; color:white; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; font-family:'Outfit', sans-serif; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
                   ${currentUser.avatar || "U"}
                 </div>
                 <div style="text-align:left; font-family:'Plus Jakarta Sans', sans-serif;">
-                  <span style="display:block; font-size:14px; font-weight:800; color:#0f172a; line-height:1.2; font-family:'Plus Jakarta Sans', sans-serif;">${currentUser.name.split(" ")[0]}</span>
-                  <span style="display:block; font-size:12px; font-weight:700; color:${isFarmer ? "#16a34a" : isBuyer ? "#0284c7" : "#7c3aed"}; text-transform:uppercase; font-family:'Plus Jakarta Sans', sans-serif;">${currentRole}</span>
+                  <span style="display:block; font-size:15px; font-weight:800; color:#0f172a; line-height:1.2;">${displayName}</span>
+                  <span style="display:block; font-size:11.5px; font-weight:700; color:${isFarmer ? "#16a34a" : isBuyer ? "#0284c7" : "#7c3aed"}; text-transform:uppercase;">${currentRole}</span>
                 </div>
                 <span style="font-size:12px; color:#64748b; margin-left:2px;">▼</span>
               </button>
@@ -103,27 +110,27 @@ export function renderNavbar(currentPath = "/") {
               <div id="role-dropdown-menu" style="display:none; position:absolute; right:0; top:calc(100% + 8px); width:260px; background:#ffffff; border:1.5px solid #e2e8f0; border-radius:14px; box-shadow:0 12px 36px rgba(0,0,0,0.15); padding:10px; z-index:1100; font-family:'Plus Jakarta Sans', sans-serif;">
                 <!-- User Info Header -->
                 <div style="padding:10px 12px; background:#f8fafc; border-radius:10px; margin-bottom:8px; border:1px solid #f1f5f9;">
-                  <p style="font-size:14.5px; font-weight:800; color:#0f172a; margin:0 0 2px 0;">${currentUser.name}</p>
-                  <p style="font-size:12.5px; color:#64748b; margin:0 0 6px 0;">${currentUser.email || "user@agriwaste.in"}</p>
-                  <span style="display:inline-block; font-size:11.5px; font-weight:800; padding:2px 8px; border-radius:12px; background:${isFarmer ? "#dcfce7" : isBuyer ? "#dbeafe" : "#f3e8ff"}; color:${isFarmer ? "#15803d" : isBuyer ? "#1d4ed8" : "#6b21a8"}; text-transform:uppercase;">
+                  <p style="font-size:16px; font-weight:800; color:#0f172a; margin:0 0 2px 0;">${currentUser.name}</p>
+                  <p style="font-size:14px; color:#64748b; margin:0 0 6px 0;">${currentUser.email || "user@agriwaste.in"}</p>
+                  <span style="display:inline-block; font-size:13px; font-weight:800; padding:2px 8px; border-radius:12px; background:${isFarmer ? "#dcfce7" : isBuyer ? "#dbeafe" : "#f3e8ff"}; color:${isFarmer ? "#15803d" : isBuyer ? "#1d4ed8" : "#6b21a8"}; text-transform:uppercase;">
                     ${isFarmer ? "🧑‍🌾 Verified Farmer" : isBuyer ? "🏭 Verified Buyer" : "🛡️ System Admin"}
                   </span>
                 </div>
 
                 <!-- Menu Links -->
                 <div style="display:flex; flex-direction:column; gap:4px;">
-                  <a href="${isFarmer ? "#farmer-profile" : isBuyer ? "#buyer-profile" : "#profile"}" style="display:flex; align-items:center; gap:10px; padding:10px 12px; font-size:14.5px; color:#334155; text-decoration:none !important; font-weight:700; border-radius:8px; transition:background 0.15s ease;" onmouseover="this.style.background='#f0fdf4'; this.style.color='#16a34a';" onmouseout="this.style.background='transparent'; this.style.color='#334155';">
-                    <span style="font-size:18px;">👤</span> My Profile & KYC
+                  <a href="${isFarmer ? "#farmer-profile" : isBuyer ? "#buyer-profile" : "#profile"}" style="display:flex; align-items:center; gap:10px; padding:9px 12px; font-size:16px; color:#334155; text-decoration:none !important; font-weight:700; border-radius:8px; transition:background 0.15s ease;" onmouseover="this.style.background='#f0fdf4'; this.style.color='#16a34a';" onmouseout="this.style.background='transparent'; this.style.color='#334155';">
+                    <span style="font-size:19px;">👤</span> My Profile & KYC
                   </a>
-                  <a href="${isFarmer ? "#farmer-dashboard" : isBuyer ? "#buyer-dashboard" : "#admin-dashboard"}" style="display:flex; align-items:center; gap:10px; padding:10px 12px; font-size:14.5px; color:#334155; text-decoration:none !important; font-weight:700; border-radius:8px; transition:background 0.15s ease;" onmouseover="this.style.background='#f0fdf4'; this.style.color='#16a34a';" onmouseout="this.style.background='transparent'; this.style.color='#334155';">
-                    <span style="font-size:18px;">📊</span> Dashboard Hub
+                  <a href="${isFarmer ? "#farmer-dashboard" : isBuyer ? "#buyer-dashboard" : "#admin-dashboard"}" style="display:flex; align-items:center; gap:10px; padding:9px 12px; font-size:16px; color:#334155; text-decoration:none !important; font-weight:700; border-radius:8px; transition:background 0.15s ease;" onmouseover="this.style.background='#f0fdf4'; this.style.color='#16a34a';" onmouseout="this.style.background='transparent'; this.style.color='#334155';">
+                    <span style="font-size:19px;">📊</span> Dashboard Hub
                   </a>
                 </div>
 
                 <!-- Sign Out -->
                 <div style="border-top:1.5px solid #f1f5f9; margin-top:8px; padding-top:6px;">
-                  <a href="#login" id="btn-user-signout" style="display:flex; align-items:center; gap:10px; padding:10px 12px; font-size:14.5px; color:#dc2626; text-decoration:none !important; font-weight:700; border-radius:8px; transition:background 0.15s ease;" onmouseover="this.style.background='#fee2e2';" onmouseout="this.style.background='transparent';">
-                    <span style="font-size:18px;">🚪</span> Sign Out
+                  <a href="#login" id="btn-user-signout" style="display:flex; align-items:center; gap:10px; padding:9px 12px; font-size:16px; color:#dc2626; text-decoration:none !important; font-weight:700; border-radius:8px; transition:background 0.15s ease;" onmouseover="this.style.background='#fee2e2';" onmouseout="this.style.background='transparent';">
+                    <span style="font-size:19px;">🚪</span> Sign Out
                   </a>
                 </div>
               </div>
@@ -131,10 +138,10 @@ export function renderNavbar(currentPath = "/") {
           `
               : `
             <!-- Public Guest Sign In / Register Buttons -->
-            <a href="#login" style="padding:9px 18px; border-radius:10px; font-size:15px; font-weight:700; color:#15803d; background:#f0fdf4; border:1.5px solid #bbf7d0; text-decoration:none !important; transition:all 0.2s;">
+            <a href="#login" style="padding:8px 16px; border-radius:8px; font-size:16.5px; font-weight:700; color:#15803d; background:#f0fdf4; border:1.5px solid #bbf7d0; text-decoration:none !important; transition:all 0.2s;">
               Sign In
             </a>
-            <a href="#register" style="padding:9px 18px; border-radius:10px; font-size:15px; font-weight:800; color:white; background:#16a34a; text-decoration:none !important; box-shadow:0 4px 12px rgba(22,163,74,0.3); transition:all 0.2s;">
+            <a href="#register" style="padding:8px 16px; border-radius:8px; font-size:16.5px; font-weight:800; color:white; background:#16a34a; text-decoration:none !important; box-shadow:0 3px 10px rgba(22,163,74,0.3); transition:all 0.2s;">
               Register
             </a>
           `

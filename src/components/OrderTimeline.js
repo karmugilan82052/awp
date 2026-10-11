@@ -10,14 +10,14 @@ export function renderOrderTimeline(order) {
       
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid #f0f6f0;">
         <div>
-          <h3 style="font-family:'Outfit', sans-serif; font-size:18px; font-weight:700; color:#0f172a;">
+          <h3 style="font-family:'Outfit', sans-serif; font-size:21px; font-weight:700; color:#0f172a;">
             Fulfillment & Live Logistics Timeline
           </h3>
-          <p style="font-size:12px; color:#64748b;">Order Tracking ID: <strong>${order.id}</strong> • Status: <span style="color:#16a34a; font-weight:700;">${order.status}</span></p>
+          <p style="font-size:14px; color:#64748b;">Order Tracking ID: <strong>${order.id}</strong> • Status: <span style="color:#16a34a; font-weight:700;">${order.status}</span></p>
         </div>
         <div style="text-align:right;">
-          <span style="font-size:11px; color:#64748b; display:block;">Est. Delivery Date</span>
-          <span style="font-size:13px; font-weight:700; color:#0f172a;">${order.estimatedDelivery || "In Progress"}</span>
+          <span style="font-size:13px; color:#64748b; display:block;">Est. Delivery Date</span>
+          <span style="font-size:15px; font-weight:700; color:#0f172a;">${order.estimatedDelivery || "In Progress"}</span>
         </div>
       </div>
 
@@ -38,13 +38,13 @@ export function renderOrderTimeline(order) {
                 isCompleted ? "#16a34a" : isActive ? "#0284c7" : "#ffffff"
               }; border:3px solid ${isCompleted ? "#16a34a" : isActive ? "#0284c7" : "#cbd5e1"}; color:${
               isCompleted || isActive ? "#ffffff" : "#64748b"
-            }; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:12px; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+            }; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
                 ${isCompleted ? "✓" : idx + 1}
               </div>
-              <span style="font-size:11px; font-weight:700; color:${
+              <span style="font-size:13px; font-weight:700; color:${
                 isActive ? "#0284c7" : isCompleted ? "#0f172a" : "#64748b"
               }; margin-top:8px; line-height:1.2;">${step.step}</span>
-              <span style="font-size:10px; color:#94a3b8; margin-top:2px;">${step.time || ""}</span>
+              <span style="font-size:12px; color:#94a3b8; margin-top:2px;">${step.time || ""}</span>
             </div>
           `;
           })
@@ -59,17 +59,17 @@ export function renderOrderTimeline(order) {
         <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
           <div>
             <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
-              <span style="font-size:16px;">🚚</span>
-              <strong style="font-size:13px; color:#0f172a;">${order.logistics.carrier}</strong>
-              <span style="background:#dbeafe; color:#1d4ed8; font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px;">${order.logistics.vehicleNumber}</span>
+              <span style="font-size:19px;">🚚</span>
+              <strong style="font-size:15px; color:#0f172a;">${order.logistics.carrier}</strong>
+              <span style="background:#dbeafe; color:#1d4ed8; font-size:12px; font-weight:700; padding:2px 6px; border-radius:4px;">${order.logistics.vehicleNumber}</span>
             </div>
-            <p style="font-size:12px; color:#475569;">
+            <p style="font-size:14px; color:#475569;">
               Driver: <strong>${order.logistics.driverName}</strong> (${order.logistics.driverPhone})
             </p>
           </div>
           <div style="text-align:right;">
-            <span style="font-size:11px; color:#64748b; display:block;">Current Transit Checkpoint</span>
-            <span style="font-size:13px; font-weight:700; color:#16a34a;">📍 ${order.logistics.currentLocation}</span>
+            <span style="font-size:13px; color:#64748b; display:block;">Current Transit Checkpoint</span>
+            <span style="font-size:15px; font-weight:700; color:#16a34a;">📍 ${order.logistics.currentLocation}</span>
           </div>
         </div>
       `

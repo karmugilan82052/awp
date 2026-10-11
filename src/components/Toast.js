@@ -42,7 +42,7 @@ export function showToast(message, type = "success", duration = 3500) {
     padding: 12px 18px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 14px;
+    font-size:17px;
     font-weight: 500;
     display: flex;
     align-items: center;
@@ -54,7 +54,7 @@ export function showToast(message, type = "success", duration = 3500) {
   `;
 
   toast.innerHTML = `
-    <span style="background:${c.bg}; color:white; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; flex-shrink:0;">${c.icon}</span>
+    <span style="background:${c.bg}; color:white; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:bold; flex-shrink:0;">${c.icon}</span>
     <span style="flex-grow:1; line-height:1.4;">${message}</span>
   `;
 

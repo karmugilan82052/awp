@@ -55,29 +55,29 @@ export function printTaxInvoice(order) {
         <style>
           body { font-family: 'Plus Jakarta Sans', Arial, sans-serif; color: #1e293b; padding: 40px; margin: 0; }
           .header { display: flex; justify-content: space-between; border-bottom: 2px solid #16a34a; padding-bottom: 20px; margin-bottom: 30px; }
-          .logo { font-size: 24px; font-weight: 800; color: #16a34a; }
-          .invoice-title { font-size: 20px; font-weight: 700; color: #0f172a; text-align: right; }
-          .grid { display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 14px; line-height: 1.6; }
+          .logo { font-size:28px; font-weight: 800; color: #16a34a; }
+          .invoice-title { font-size:23px; font-weight: 700; color: #0f172a; text-align: right; }
+          .grid { display: flex; justify-content: space-between; margin-bottom: 30px; font-size:17px; line-height: 1.6; }
           .card { width: 46%; background: #f8fafc; padding: 18px; border-radius: 8px; border: 1px solid #e2e8f0; }
           table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-          th { background: #16a34a; color: white; padding: 12px; text-align: left; font-size: 13px; }
-          td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
-          .totals { width: 320px; margin-left: auto; font-size: 14px; line-height: 1.8; }
+          th { background: #16a34a; color: white; padding: 12px; text-align: left; font-size:15px; }
+          td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size:15px; }
+          .totals { width: 320px; margin-left: auto; font-size:17px; line-height: 1.8; }
           .totals-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
-          .grand-total { font-size: 18px; font-weight: 800; color: #16a34a; border-top: 2px solid #cbd5e1; padding-top: 10px; }
-          .footer { margin-top: 50px; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+          .grand-total { font-size:21px; font-weight: 800; color: #16a34a; border-top: 2px solid #cbd5e1; padding-top: 10px; }
+          .footer { margin-top: 50px; text-align: center; font-size:14px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 20px; }
         </style>
       </head>
       <body>
         <div class="header">
           <div>
             <div class="logo">🌾 AgriWaste Marketplace</div>
-            <p style="font-size:12px; color:#64748b; margin-top:4px;">National Bio-Exchange & Circular Agriculture Hub</p>
+            <p style="font-size:14px; color:#64748b; margin-top:4px;">National Bio-Exchange & Circular Agriculture Hub</p>
           </div>
           <div class="invoice-title">
             TAX INVOICE<br>
-            <span style="font-size:14px; color:#64748b; font-weight:normal;">Invoice #: INV-${order.id}</span><br>
-            <span style="font-size:12px; color:#64748b; font-weight:normal;">Date: ${order.createdAt}</span>
+            <span style="font-size:17px; color:#64748b; font-weight:normal;">Invoice #: INV-${order.id}</span><br>
+            <span style="font-size:14px; color:#64748b; font-weight:normal;">Date: ${order.createdAt}</span>
           </div>
         </div>
 
@@ -109,7 +109,7 @@ export function printTaxInvoice(order) {
           </thead>
           <tbody>
             <tr>
-              <td><strong>${order.listingTitle}</strong><br><span style="font-size:11px; color:#64748b;">Category: ${order.category}</span></td>
+              <td><strong>${order.listingTitle}</strong><br><span style="font-size:13px; color:#64748b;">Category: ${order.category}</span></td>
               <td>${order.quantity} ${order.unit}</td>
               <td>₹${order.unitPrice.toLocaleString("en-IN")} / ${order.unit.slice(0, -1)}</td>
               <td style="text-align:right;">₹${order.subtotal.toLocaleString("en-IN")}</td>

@@ -46,7 +46,7 @@ export function addListingMarkers(map, listings = [], onMarkerClick = null) {
   // Custom green SVG marker for Agri Waste
   const wasteIcon = L.divIcon({
     className: "custom-map-marker",
-    html: `<div style="background:#16a34a; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:16px; border:3px solid #ffffff; box-shadow:0 4px 10px rgba(0,0,0,0.25);">🌾</div>`,
+    html: `<div style="background:#16a34a; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:19px; border:3px solid #ffffff; box-shadow:0 4px 10px rgba(0,0,0,0.25);">🌾</div>`,
     iconSize: [34, 34],
     iconAnchor: [17, 17],
     popupAnchor: [0, -18]
@@ -58,10 +58,10 @@ export function addListingMarkers(map, listings = [], onMarkerClick = null) {
 
       const popupHtml = `
         <div style="font-family:Plus Jakarta Sans, sans-serif; min-width:200px; padding:4px;">
-          <h4 style="font-weight:700; font-size:14px; color:#142017; margin-bottom:4px;">${listing.title}</h4>
-          <p style="font-size:12px; color:#16a34a; font-weight:600; margin-bottom:4px;">₹${listing.price.toLocaleString("en-IN")} / Ton • ${listing.quantity} Tons</p>
-          <p style="font-size:11px; color:#64748b; margin-bottom:8px;">📍 ${listing.location}</p>
-          <a href="#waste/${listing.id}" style="display:inline-block; background:#16a34a; color:white; font-size:11px; font-weight:600; padding:5px 12px; border-radius:6px; text-decoration:none;">View Waste Details →</a>
+          <h4 style="font-weight:700; font-size:17px; color:#142017; margin-bottom:4px;">${listing.title}</h4>
+          <p style="font-size:14px; color:#16a34a; font-weight:600; margin-bottom:4px;">₹${listing.price.toLocaleString("en-IN")} / Ton • ${listing.quantity} Tons</p>
+          <p style="font-size:13px; color:#64748b; margin-bottom:8px;">📍 ${listing.location}</p>
+          <a href="#waste/${listing.id}" style="display:inline-block; background:#16a34a; color:white; font-size:13px; font-weight:600; padding:5px 12px; border-radius:6px; text-decoration:none;">View Waste Details →</a>
         </div>
       `;
 

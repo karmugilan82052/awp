@@ -33,19 +33,19 @@ export function renderMarketplacePage(searchParams = {}) {
         
         <!-- Marketplace Breadcrumb & Header -->
         <div style="margin-bottom:28px;">
-          <div style="font-size:12px; color:#64748b; margin-bottom:6px;">
+          <div style="font-size:14px; color:#64748b; margin-bottom:6px;">
             <a href="#/" style="color:#16a34a; text-decoration:none;">Home</a> / <span style="color:#0f172a; font-weight:600;">Marketplace</span>
           </div>
           <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px;">
             <div>
-              <h1 style="font-family:'Outfit', sans-serif; font-size:32px; font-weight:800; color:#0f172a; margin:0;">
+              <h1 style="font-family:'Outfit', sans-serif; font-size:37px; font-weight:800; color:#0f172a; margin:0;">
                 Agricultural Waste Marketplace
               </h1>
-              <p style="font-size:14px; color:#64748b; margin-top:4px;">
+              <p style="font-size:17px; color:#64748b; margin-top:4px;">
                 Discover, evaluate, and purchase verified biomass and agricultural residues across India.
               </p>
             </div>
-            <a href="#sell-waste" style="background:#16a34a; color:white; padding:10px 20px; border-radius:10px; font-size:14px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+            <a href="#sell-waste" style="background:#16a34a; color:white; padding:10px 20px; border-radius:10px; font-size:17px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
               <span>+</span> Sell Your Crop Waste
             </a>
           </div>
@@ -65,7 +65,7 @@ export function renderMarketplacePage(searchParams = {}) {
             <!-- Controls Bar: Results Count, Sort, View Switcher -->
             <div style="background:#ffffff; border:1px solid #e2ece2; border-radius:14px; padding:14px 20px; display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:16px; box-shadow:0 2px 6px rgba(15,61,33,0.03);">
               
-              <div style="font-size:14px; color:#475569;">
+              <div style="font-size:17px; color:#475569;">
                 Showing <strong style="color:#0f172a;">${paginatedListings.length}</strong> of <strong style="color:#0f172a;">${totalCount}</strong> listings
                 ${filters.category !== "all" ? ` in <span style="color:#16a34a; font-weight:700;">${filters.category}</span>` : ""}
               </div>
@@ -74,8 +74,8 @@ export function renderMarketplacePage(searchParams = {}) {
                 
                 <!-- Sort Dropdown -->
                 <div style="display:flex; align-items:center; gap:8px;">
-                  <span style="font-size:12px; font-weight:700; color:#64748b;">Sort:</span>
-                  <select id="marketplace-sort-select" style="padding:6px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:'Plus Jakarta Sans', sans-serif; background:#ffffff; outline:none;">
+                  <span style="font-size:14px; font-weight:700; color:#64748b;">Sort:</span>
+                  <select id="marketplace-sort-select" style="padding:6px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:15px; font-family:'Plus Jakarta Sans', sans-serif; background:#ffffff; outline:none;">
                     <option value="newest" ${filters.sortBy === "newest" ? "selected" : ""}>Newest Listings</option>
                     <option value="price-asc" ${filters.sortBy === "price-asc" ? "selected" : ""}>Price: Low to High</option>
                     <option value="price-desc" ${filters.sortBy === "price-desc" ? "selected" : ""}>Price: High to Low</option>
@@ -89,17 +89,17 @@ export function renderMarketplacePage(searchParams = {}) {
                 <div style="display:flex; background:#f1f5f9; padding:3px; border-radius:8px;">
                   <button class="btn-view-toggle ${!isListView && !isMapView ? "active" : ""}" data-view="grid" title="Grid View" style="border:none; background:${
     !isListView && !isMapView ? "#ffffff" : "transparent"
-  }; color:${!isListView && !isMapView ? "#16a34a" : "#64748b"}; padding:5px 10px; border-radius:6px; font-size:13px; font-weight:700; cursor:pointer;">
+  }; color:${!isListView && !isMapView ? "#16a34a" : "#64748b"}; padding:5px 10px; border-radius:6px; font-size:15px; font-weight:700; cursor:pointer;">
                     ⊞ Grid
                   </button>
                   <button class="btn-view-toggle ${isListView ? "active" : ""}" data-view="list" title="List View" style="border:none; background:${
     isListView ? "#ffffff" : "transparent"
-  }; color:${isListView ? "#16a34a" : "#64748b"}; padding:5px 10px; border-radius:6px; font-size:13px; font-weight:700; cursor:pointer;">
+  }; color:${isListView ? "#16a34a" : "#64748b"}; padding:5px 10px; border-radius:6px; font-size:15px; font-weight:700; cursor:pointer;">
                     ☰ List
                   </button>
                   <button class="btn-view-toggle ${isMapView ? "active" : ""}" data-view="map" title="GIS Map View" style="border:none; background:${
     isMapView ? "#ffffff" : "transparent"
-  }; color:${isMapView ? "#16a34a" : "#64748b"}; padding:5px 10px; border-radius:6px; font-size:13px; font-weight:700; cursor:pointer;">
+  }; color:${isMapView ? "#16a34a" : "#64748b"}; padding:5px 10px; border-radius:6px; font-size:15px; font-weight:700; cursor:pointer;">
                     🗺️ Map
                   </button>
                 </div>
@@ -114,10 +114,10 @@ export function renderMarketplacePage(searchParams = {}) {
                 ? `
               <div style="background:#ffffff; border:1px solid #e2ece2; border-radius:16px; padding:16px; margin-bottom:24px; box-shadow:0 4px 12px rgba(15,61,33,0.06);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                  <h4 style="font-family:'Outfit', sans-serif; font-size:16px; font-weight:700; color:#0f172a; margin:0;">
+                  <h4 style="font-family:'Outfit', sans-serif; font-size:19px; font-weight:700; color:#0f172a; margin:0;">
                     📍 Geospatial Crop Residue Map
                   </h4>
-                  <span style="font-size:12px; color:#16a34a; font-weight:600;">Interactive Farm Locations</span>
+                  <span style="font-size:14px; color:#16a34a; font-weight:600;">Interactive Farm Locations</span>
                 </div>
                 <div id="marketplace-leaflet-map" style="height:460px; width:100%; border-radius:12px; overflow:hidden;"></div>
               </div>
@@ -130,10 +130,10 @@ export function renderMarketplacePage(searchParams = {}) {
               totalCount === 0
                 ? `
               <div style="background:#ffffff; border:1px solid #e2ece2; border-radius:16px; padding:60px 20px; text-align:center;">
-                <div style="font-size:48px; margin-bottom:12px;">🌾</div>
-                <h3 style="font-family:'Outfit', sans-serif; font-size:20px; font-weight:700; color:#0f172a; margin-bottom:6px;">No waste listings match your filters</h3>
-                <p style="font-size:14px; color:#64748b; margin-bottom:20px;">Try adjusting the category, price range, or state location.</p>
-                <button id="btn-clear-empty-filters" style="background:#16a34a; color:white; border:none; padding:10px 20px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer;">
+                <div style="font-size:55px; margin-bottom:12px;">🌾</div>
+                <h3 style="font-family:'Outfit', sans-serif; font-size:23px; font-weight:700; color:#0f172a; margin-bottom:6px;">No waste listings match your filters</h3>
+                <p style="font-size:17px; color:#64748b; margin-bottom:20px;">Try adjusting the category, price range, or state location.</p>
+                <button id="btn-clear-empty-filters" style="background:#16a34a; color:white; border:none; padding:10px 20px; border-radius:8px; font-size:15px; font-weight:700; cursor:pointer;">
                   Reset All Filters
                 </button>
               </div>
@@ -158,7 +158,7 @@ export function renderMarketplacePage(searchParams = {}) {
               <div style="display:flex; justify-content:center; align-items:center; gap:8px; margin-top:40px;">
                 <button class="btn-pagination" data-page="${currentPage - 1}" ${
                     currentPage === 1 ? "disabled" : ""
-                  } style="padding:8px 14px; border:1px solid #cbd5e1; border-radius:8px; background:#ffffff; font-size:13px; font-weight:600; cursor:${
+                  } style="padding:8px 14px; border:1px solid #cbd5e1; border-radius:8px; background:#ffffff; font-size:15px; font-weight:600; cursor:${
                     currentPage === 1 ? "not-allowed" : "pointer"
                   }; opacity:${currentPage === 1 ? "0.5" : "1"};">
                   ← Previous
@@ -171,7 +171,7 @@ export function renderMarketplacePage(searchParams = {}) {
                       p === currentPage ? "#16a34a" : "#cbd5e1"
                     }; background:${p === currentPage ? "#16a34a" : "#ffffff"}; color:${
                       p === currentPage ? "#ffffff" : "#0f172a"
-                    }; font-weight:700; font-size:13px; cursor:pointer;">
+                    }; font-weight:700; font-size:15px; cursor:pointer;">
                     ${p}
                   </button>
                 `
@@ -180,7 +180,7 @@ export function renderMarketplacePage(searchParams = {}) {
 
                 <button class="btn-pagination" data-page="${currentPage + 1}" ${
                     currentPage === totalPages ? "disabled" : ""
-                  } style="padding:8px 14px; border:1px solid #cbd5e1; border-radius:8px; background:#ffffff; font-size:13px; font-weight:600; cursor:${
+                  } style="padding:8px 14px; border:1px solid #cbd5e1; border-radius:8px; background:#ffffff; font-size:15px; font-weight:600; cursor:${
                     currentPage === totalPages ? "not-allowed" : "pointer"
                   }; opacity:${currentPage === totalPages ? "0.5" : "1"};">
                   Next →

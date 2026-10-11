@@ -12,19 +12,19 @@ export function renderComplaintModal(order) {
         
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid #f0f6f0; padding-bottom:12px;">
           <div>
-            <h3 style="font-family:'Outfit', sans-serif; font-size:18px; font-weight:700; color:#dc2626; margin:0; display:flex; align-items:center; gap:8px;">
+            <h3 style="font-family:'Outfit', sans-serif; font-size:21px; font-weight:700; color:#dc2626; margin:0; display:flex; align-items:center; gap:8px;">
               <span>🛡️</span> Raise Dispute Ticket
             </h3>
-            <span style="font-size:12px; color:#64748b;">Order: ${order.id} • ${order.listingTitle}</span>
+            <span style="font-size:14px; color:#64748b;">Order: ${order.id} • ${order.listingTitle}</span>
           </div>
-          <button id="btn-close-complaint-modal" style="background:none; border:none; font-size:22px; color:#64748b; cursor:pointer;">✕</button>
+          <button id="btn-close-complaint-modal" style="background:none; border:none; font-size:25px; color:#64748b; cursor:pointer;">✕</button>
         </div>
 
         <form id="complaint-form" data-order-id="${order.id}">
           
           <div style="margin-bottom:16px;">
-            <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:6px;">Dispute Reason / Category</label>
-            <select id="input-complaint-type" style="width:100%; padding:9px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:'Plus Jakarta Sans', sans-serif;">
+            <label style="display:block; font-size:14px; font-weight:700; color:#475569; margin-bottom:6px;">Dispute Reason / Category</label>
+            <select id="input-complaint-type" style="width:100%; padding:9px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:15px; font-family:'Plus Jakarta Sans', sans-serif;">
               <option value="Quality Mismatch / High Moisture">Quality Mismatch / High Moisture</option>
               <option value="Weight / Quantity Shortage">Weight / Quantity Shortage</option>
               <option value="Delayed Pickup / Transport Failure">Delayed Pickup / Transport Failure</option>
@@ -35,20 +35,20 @@ export function renderComplaintModal(order) {
           </div>
 
           <div style="margin-bottom:16px;">
-            <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:6px;">Detailed Description & Evidence</label>
-            <textarea id="input-complaint-desc" rows="4" required placeholder="State the specific issue, lab test findings, or transport delay details..." style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-family:'Plus Jakarta Sans', sans-serif; outline:none;"></textarea>
+            <label style="display:block; font-size:14px; font-weight:700; color:#475569; margin-bottom:6px;">Detailed Description & Evidence</label>
+            <textarea id="input-complaint-desc" rows="4" required placeholder="State the specific issue, lab test findings, or transport delay details..." style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:15px; font-family:'Plus Jakarta Sans', sans-serif; outline:none;"></textarea>
           </div>
 
           <div style="margin-bottom:20px;">
-            <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:6px;">Supporting Document / Photo (Optional)</label>
-            <input type="file" id="input-complaint-file" style="font-size:12px;" />
+            <label style="display:block; font-size:14px; font-weight:700; color:#475569; margin-bottom:6px;">Supporting Document / Photo (Optional)</label>
+            <input type="file" id="input-complaint-file" style="font-size:14px;" />
           </div>
 
-          <div style="background:#fef2f2; border:1px solid #fecaca; padding:12px; border-radius:8px; margin-bottom:20px; font-size:11px; color:#991b1b; line-height:1.4;">
+          <div style="background:#fef2f2; border:1px solid #fecaca; padding:12px; border-radius:8px; margin-bottom:20px; font-size:13px; color:#991b1b; line-height:1.4;">
             ℹ️ Escrow funds for Order #${order.id} will be placed on hold until both parties and the platform arbitrator reach a resolution.
           </div>
 
-          <button type="submit" style="width:100%; background:#dc2626; color:white; border:none; padding:12px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer;">
+          <button type="submit" style="width:100%; background:#dc2626; color:white; border:none; padding:12px; border-radius:10px; font-size:17px; font-weight:700; cursor:pointer;">
             Submit Dispute for Arbitration
           </button>
         </form>

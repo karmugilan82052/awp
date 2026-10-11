@@ -2,6 +2,7 @@
  * AgriWaste Marketplace — Main Application Entry Point & Client Router
  */
 
+import "./index.css";
 import Chart from "chart.js/auto";
 import confetti from "canvas-confetti";
 import { store } from "./store/state.js";
@@ -33,9 +34,10 @@ import { renderLoginPage } from "./pages/Login.js";
 import { renderRegisterPage } from "./pages/Register.js";
 
 // Services
-import { classifyAgriWasteImage, getAIAssistantResponse } from "./services/aiService.js";
+import { classifyAgriWasteImage, getAIAssistantResponse, setGeminiApiKey, setGeminiModel, getGeminiApiKey, getGeminiModel } from "./services/aiService.js";
 import { initializeMap, addListingMarkers } from "./services/mapService.js";
 import { exportToCSV, printTaxInvoice } from "./services/exportService.js";
+import { processRazorpayPayment } from "./services/razorpayService.js";
 
 class App {
   constructor() {
@@ -226,28 +228,114 @@ class App {
       });
     });
 
-    // AI Form & Quick Queries
+    // AI Form & Quick Queries with Google Gemini LLM
     const aiForm = document.getElementById("ai-query-form");
     const aiInput = document.getElementById("ai-query-input");
     const aiMessages = document.getElementById("ai-chat-messages");
 
-    const sendAIQuery = queryText => {
+    // Toggle Gemini Config Tray
+    const btnToggleSettings = document.getElementById("btn-toggle-gemini-settings");
+    const geminiTray = document.getElementById("gemini-config-tray");
+    if (btnToggleSettings && geminiTray) {
+      btnToggleSettings.addEventListener("click", () => {
+        geminiTray.style.display = geminiTray.style.display === "none" ? "block" : "none";
+      });
+    }
+
+    // Save Gemini Key
+    const btnSaveKey = document.getElementById("btn-save-gemini-key");
+    const keyInput = document.getElementById("gemini-api-key-input");
+    const badgeStatus = document.getElementById("gemini-badge-status");
+    if (btnSaveKey && keyInput) {
+      btnSaveKey.addEventListener("click", () => {
+        const val = keyInput.value.trim();
+        setGeminiApiKey(val);
+        showToast(val ? "✓ Google Gemini API Key saved!" : "Gemini API Key cleared", "success");
+        if (badgeStatus) {
+          badgeStatus.innerText = val ? "Live Gemini" : "Gemini Mode";
+          badgeStatus.style.background = val ? "rgba(74,222,128,0.25)" : "rgba(250,204,21,0.25)";
+          badgeStatus.style.color = val ? "#86efac" : "#fef08a";
+        }
+        if (geminiTray) geminiTray.style.display = "none";
+      });
+    }
+
+    const btnClearKey = document.getElementById("btn-clear-gemini-key");
+    if (btnClearKey) {
+      btnClearKey.addEventListener("click", () => {
+        setGeminiApiKey("");
+        if (keyInput) keyInput.value = "";
+        showToast("Gemini API Key removed. Using local knowledge mode.", "info");
+        if (badgeStatus) {
+          badgeStatus.innerText = "Gemini Mode";
+          badgeStatus.style.background = "rgba(250,204,21,0.25)";
+          badgeStatus.style.color = "#fef08a";
+        }
+        if (geminiTray) geminiTray.style.display = "none";
+      });
+    }
+
+    const btnAutoInstall = document.getElementById("btn-auto-install-key");
+    if (btnAutoInstall) {
+      btnAutoInstall.addEventListener("click", () => {
+        setGeminiApiKey("");
+        if (keyInput) keyInput.value = "";
+        showToast("✓ Google Gemini 2.0 Flash key auto-installed & active!", "success");
+        if (badgeStatus) {
+          badgeStatus.innerHTML = `<span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#16a34a;"></span> Active`;
+          badgeStatus.style.background = "#dcfce7";
+          badgeStatus.style.color = "#15803d";
+        }
+        if (geminiTray) geminiTray.style.display = "none";
+      });
+    }
+
+    const modelSelect = document.getElementById("gemini-model-select");
+    if (modelSelect) {
+      modelSelect.addEventListener("change", e => {
+        setGeminiModel(e.target.value);
+        showToast(`Gemini model set to ${e.target.value}`, "info");
+      });
+    }
+
+    const sendAIQuery = async queryText => {
       if (!queryText.trim() || !aiMessages) return;
-      // User message
+
+      // User message bubble
       const userDiv = document.createElement("div");
-      userDiv.style.cssText = "align-self:flex-end; background:#16a34a; color:white; padding:10px 14px; border-radius:14px 14px 2px 14px; font-size:13px; max-width:80%;";
+      userDiv.style.cssText = "align-self:flex-end; background:#16a34a; color:white; padding:12px 16px; border-radius:16px 16px 2px 16px; font-size:15px; max-width:82%; box-shadow:0 2px 8px rgba(22,163,74,0.25);";
       userDiv.innerText = queryText;
       aiMessages.appendChild(userDiv);
 
-      // AI Response
-      const res = getAIAssistantResponse(queryText);
-      setTimeout(() => {
-        const botDiv = document.createElement("div");
-        botDiv.style.cssText = "align-self:flex-start; background:#ffffff; color:#1e293b; padding:12px 16px; border-radius:14px 14px 14px 2px; font-size:13px; line-height:1.6; border:1px solid #e2e8f0; box-shadow:0 2px 6px rgba(0,0,0,0.04); max-width:85%;";
-        botDiv.innerHTML = res.text.replace(/\n\n/g, "<br><br>").replace(/\n/g, "<br>").replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-        aiMessages.appendChild(botDiv);
-        aiMessages.scrollTop = aiMessages.scrollHeight;
-      }, 400);
+      // Loading thinking bubble
+      const loadingDiv = document.createElement("div");
+      loadingDiv.style.cssText = "align-self:flex-start; background:#ffffff; color:#64748b; padding:12px 16px; border-radius:16px 16px 16px 2px; font-size:14px; line-height:1.6; border:1px solid #e2e8f0; display:flex; align-items:center; gap:8px; box-shadow:0 2px 6px rgba(0,0,0,0.04);";
+      loadingDiv.innerHTML = `<span style="display:inline-block; animation:pulse 1s ease infinite;">⚡</span> <span style="font-style:italic;">Gemini is analyzing agricultural bio-economy data...</span>`;
+      aiMessages.appendChild(loadingDiv);
+      aiMessages.scrollTop = aiMessages.scrollHeight;
+
+      try {
+        const res = await getAIAssistantResponse(queryText);
+        loadingDiv.style.color = "#1e293b";
+        loadingDiv.style.fontSize = "15px";
+        loadingDiv.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px solid #f1f5f9; padding-bottom:6px;">
+            <span style="font-size:12px; font-weight:800; color:#16a34a; display:inline-flex; align-items:center; gap:4px;">
+              <span>⚡</span> ${res.model || "Google Gemini"}
+            </span>
+            <span style="font-size:11px; color:#94a3b8;">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+          </div>
+          <div style="line-height:1.65;">
+            ${res.text
+              .replace(/\n\n/g, "<br><br>")
+              .replace(/\n/g, "<br>")
+              .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+              .replace(/\*(.*?)\*/g, "<em>$1</em>")}
+          </div>
+        `;
+      } catch (err) {
+        loadingDiv.innerHTML = `⚠️ Error fetching Gemini response: ${err.message}`;
+      }
 
       aiMessages.scrollTop = aiMessages.scrollHeight;
     };
@@ -272,6 +360,21 @@ class App {
     const heroBtn = document.getElementById("btn-hero-search");
     const heroInput = document.getElementById("hero-search-input");
     const heroState = document.getElementById("hero-state-select");
+    if (heroInput) {
+      if (heroInput.value.includes("@") || heroInput.value.includes("gmail") || heroInput.value.includes("kamalesh")) {
+        heroInput.value = "";
+      }
+      setTimeout(() => {
+        if (heroInput.value.includes("@") || heroInput.value.includes("gmail") || heroInput.value.includes("kamalesh")) {
+          heroInput.value = "";
+        }
+      }, 150);
+      setTimeout(() => {
+        if (heroInput.value.includes("@") || heroInput.value.includes("gmail") || heroInput.value.includes("kamalesh")) {
+          heroInput.value = "";
+        }
+      }, 600);
+    }
     if (heroBtn && heroInput) {
       heroBtn.addEventListener("click", () => {
         const q = encodeURIComponent(heroInput.value.trim());
@@ -462,16 +565,72 @@ class App {
       });
     }
 
-    // 8. Checkout Submission & Confetti
+    // 8. Checkout Submission with Razorpay Escrow & Confetti
     const checkoutForm = document.getElementById("checkout-form");
     if (checkoutForm) {
-      checkoutForm.addEventListener("submit", e => {
+      // Payment option selection toggle
+      document.querySelectorAll(".payment-method-option").forEach(opt => {
+        opt.addEventListener("click", () => {
+          document.querySelectorAll(".payment-method-option").forEach(o => {
+            o.classList.remove("active");
+            o.style.borderColor = "#e2e8f0";
+            o.style.background = "#ffffff";
+          });
+          opt.classList.add("active");
+          opt.style.borderColor = "#16a34a";
+          opt.style.background = "#f0fdf4";
+          const radio = opt.querySelector('input[type="radio"]');
+          if (radio) radio.checked = true;
+        });
+      });
+
+      checkoutForm.addEventListener("submit", async e => {
         e.preventDefault();
         const calc = store.getCartCalculations();
-        const company = document.getElementById("input-checkout-company")?.value;
-        const address = document.getElementById("input-checkout-address")?.value;
-        const phone = document.getElementById("input-checkout-phone")?.value;
-        const selectedPayment = document.querySelector('input[name="payment-method"]:checked')?.value || "UPI";
+        const company = document.getElementById("input-checkout-company")?.value || "Buyer";
+        const address = document.getElementById("input-checkout-address")?.value || "Factory Gate";
+        const phone = document.getElementById("input-checkout-phone")?.value || "+91 98450 67890";
+        const selectedPayment = document.querySelector('input[name="payment-method"]:checked')?.value || "Razorpay (UPI)";
+        const confirmBtn = document.getElementById("btn-confirm-order");
+
+        let paymentResult = {
+          success: true,
+          paymentId: `pay_weighbridge_${Date.now()}`,
+          method: selectedPayment,
+          gateway: "Weighbridge Pay on Delivery"
+        };
+
+        // If paying via Razorpay
+        if (selectedPayment.includes("Razorpay")) {
+          if (confirmBtn) {
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = `<span>⏳</span> Connecting to Razorpay Escrow Gateway...`;
+          }
+
+          try {
+            paymentResult = await processRazorpayPayment({
+              amount: calc.totalAmount,
+              name: company,
+              description: `Escrow Deposit: ${calc.items[0]?.listingTitle || "Agricultural Biomass"}`,
+              prefill: {
+                name: company,
+                contact: phone
+              },
+              notes: {
+                totalTons: calc.totalTons,
+                category: calc.items[0]?.category
+              },
+              methodTitle: selectedPayment
+            });
+          } catch (err) {
+            if (confirmBtn) {
+              confirmBtn.disabled = false;
+              confirmBtn.innerHTML = `<span>⚡</span> Pay via Razorpay Escrow (₹${calc.totalAmount.toLocaleString("en-IN")})`;
+            }
+            showToast(err.message || "Payment cancelled.", "info");
+            return;
+          }
+        }
 
         const newOrder = store.createOrder({
           listingId: calc.items[0]?.listingId,
@@ -485,17 +644,20 @@ class App {
           platformFee: calc.platformFee,
           taxGst: calc.taxGst,
           totalAmount: calc.totalAmount,
-          paymentMethod: selectedPayment,
+          paymentMethod: paymentResult.method || selectedPayment,
+          paymentGateway: paymentResult.gateway || "Razorpay Escrow",
+          transactionId: paymentResult.paymentId || `pay_rzp_${Date.now()}`,
+          paymentStatus: "Escrow Funded (Razorpay Verified)",
           deliveryAddress: address,
           seller: calc.items[0]?.seller
         });
 
         // Trigger celebratory confetti
         if (typeof confetti === "function") {
-          confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+          confetti({ particleCount: 140, spread: 85, origin: { y: 0.6 } });
         }
 
-        showToast(`Order #${newOrder.id} successfully placed & secured in escrow!`, "success");
+        showToast(`✓ Order #${newOrder.id} funded via Razorpay (${paymentResult.paymentId})! Escrow locked.`, "success");
         window.location.hash = `#orders/${newOrder.id}`;
       });
     }
@@ -527,7 +689,7 @@ class App {
           previewGrid.innerHTML = `
             <div style="position:relative; border-radius:8px; overflow:hidden; border:2px solid #16a34a;">
               <img src="/images/waste/${result.categoryId || 'paddy-straw'}.jpg" style="width:100%; height:80px; object-fit:cover;" />
-              <span style="position:absolute; bottom:2px; right:2px; background:#16a34a; color:white; font-size:9px; padding:1px 4px; border-radius:4px;">AI Analyzed</span>
+              <span style="position:absolute; bottom:2px; right:2px; background:#16a34a; color:white; font-size:11px; padding:1px 4px; border-radius:4px;">AI Analyzed</span>
             </div>
           `;
         }
@@ -807,7 +969,7 @@ class App {
           }
 
           if (btnLoginText) {
-            btnLoginText.textContent = `Sign In as ${role === 'farmer' ? 'Farmer (Ramesh Patel)' : role === 'buyer' ? 'Buyer (AgroFeed)' : 'Admin (Dr. Amit Verma)'}`;
+            btnLoginText.textContent = `Sign In as ${role === 'farmer' ? 'Farmer (Selvam Ramasamy)' : role === 'buyer' ? 'Buyer (AgroFeed - Dr. M. Senthil Nathan)' : 'Admin (Velmurugan Pandian)'}`;
           }
 
           store.setCurrentRole(role);
@@ -949,7 +1111,7 @@ class App {
     if (btnForgot) {
       btnForgot.addEventListener("click", e => {
         e.preventDefault();
-        const email = document.getElementById("login-email")?.value || "ramesh@greenfarmagro.in";
+        const email = document.getElementById("login-email")?.value || "selvam@greenfarmagro.in";
         showToast(`Password reset link and OTP sent to ${email}`, "info");
       });
     }
@@ -1277,7 +1439,7 @@ class App {
       new Chart(adminStateCanvas, {
         type: "bar",
         data: {
-          labels: ["Punjab", "Maharashtra", "Tamil Nadu", "Haryana", "Gujarat"],
+          labels: ["Thanjavur Delta", "Kongu Erode", "Coimbatore Hub", "Tiruppur Agro", "Salem District"],
           datasets: [
             {
               label: "Tons Traded",

@@ -16,7 +16,7 @@ import {
 } from "./initialData.js";
 import { generateId, deepClone } from "../utils/helpers.js";
 
-const STORAGE_KEY = "AGRIWASTE_STATE_V4";
+const STORAGE_KEY = "AGRIWASTE_STATE_TAMIL_V6";
 
 class Store {
   constructor() {
@@ -475,8 +475,8 @@ class Store {
       estimatedDelivery: new Date(now.getTime() + 86400000 * 3).toLocaleDateString("en-IN", { dateStyle: "medium" }),
       seller: orderData.seller || {
         id: "usr-farmer-1",
-        name: "Ramesh Patel",
-        farmName: "GreenFarm Agro",
+        name: "Selvam Ramasamy",
+        farmName: "Kongu Green Organic Agro",
         phone: "+91 98765 43210",
         pickupAddress: "Farm Gate, Pollachi, Tamil Nadu"
       },
@@ -485,12 +485,12 @@ class Store {
         name: currentUser.name,
         company: currentUser.companyName || currentUser.farmName || currentUser.name,
         phone: currentUser.phone || "+91 98450 67890",
-        deliveryAddress: orderData.deliveryAddress || currentUser.location || "Industrial Hub, Bengaluru"
+        deliveryAddress: orderData.deliveryAddress || currentUser.location || "SIDCO Industrial Hub, Coimbatore, Tamil Nadu"
       },
       logistics: {
-        carrier: "Kisan FastFreight Logistics",
-        driverName: "Surinder Kumar",
-        driverPhone: "+91 98412 77889",
+        carrier: "Tamil Nadu AgriExpress Freight",
+        driverName: "Muthu Vel",
+        driverPhone: "+91 94440 22331",
         vehicleNumber: `TN-${Math.floor(10 + Math.random() * 80)}-AG-${Math.floor(1000 + Math.random() * 9000)}`,
         currentLocation: "Order confirmed, preparing dispatch route",
         lat: 11.0168,

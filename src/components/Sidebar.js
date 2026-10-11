@@ -44,7 +44,7 @@ export function renderSidebar(activeTab = "overview", role = "farmer") {
   return `
     <aside style="width:310px; background:#ffffff; border-right:1.5px solid #e2ece2; padding:28px 20px; min-height:calc(100vh - 74px); display:flex; flex-direction:column; gap:14px; flex-shrink:0;">
       <div style="padding:0 8px 16px 8px; margin-bottom:6px; border-bottom:1.5px solid #f0f6f0;">
-        <span style="font-size:15px; font-weight:800; color:#334155; text-transform:uppercase; letter-spacing:0.8px;">
+        <span style="font-size:18px; font-weight:800; color:#334155; text-transform:uppercase; letter-spacing:0.8px;">
           ${isFarmer ? "🧑‍🌾 Farmer Dashboard" : isBuyer ? "🏭 Procurement Hub" : "🛡️ Admin Console"}
         </span>
       </div>
@@ -53,12 +53,12 @@ export function renderSidebar(activeTab = "overview", role = "farmer") {
         ${items
           .map(
             item => `
-          <a href="${item.link}" class="sidebar-link ${activeTab === item.id ? "active" : ""}" style="display:flex; align-items:center; gap:16px; padding:14px 18px; border-radius:12px; font-size:17.5px; font-weight:700; text-decoration:none; color:${
+          <a href="${item.link}" class="sidebar-link ${activeTab === item.id ? "active" : ""}" style="display:flex; align-items:center; gap:16px; padding:14px 18px; border-radius:12px; font-size:21px; font-weight:700; text-decoration:none; color:${
               activeTab === item.id ? "#15803d" : "#334155"
             }; background:${activeTab === item.id ? "#f0fdf4" : "transparent"}; border:${
               activeTab === item.id ? "1.5px solid #bbf7d0" : "1.5px solid transparent"
             }; transition:all 0.15s ease;">
-            <span style="font-size:24px; line-height:1;">${item.icon}</span>
+            <span style="font-size:28px; line-height:1;">${item.icon}</span>
             <span style="line-height:1.2;">${item.label}</span>
           </a>
         `
@@ -66,10 +66,10 @@ export function renderSidebar(activeTab = "overview", role = "farmer") {
           .join("")}
       </nav>
 
-      <div style="margin-top:auto; padding:18px; background:#f8fafc; border-radius:14px; border:1.5px solid #e2e8f0; font-size:14.5px; color:#475569;">
-        <p style="font-weight:800; color:#0f172a; font-size:15.5px; margin-bottom:4px;">National Bio-Support</p>
-        <p style="margin-bottom:14px; font-size:14px; color:#64748b; line-height:1.4;">Toll-free Kisan Helpline: <br><strong style="color:#16a34a; font-size:16px;">1800-419-AGRI</strong></p>
-        <a href="#sell-waste" style="display:block; text-align:center; background:#16a34a; color:white; padding:12px 16px; border-radius:10px; font-weight:800; font-size:15.5px; text-decoration:none; box-shadow:0 4px 10px rgba(22,163,74,0.25);">+ Add New Listing</a>
+      <div style="margin-top:auto; padding:18px; background:#f8fafc; border-radius:14px; border:1.5px solid #e2e8f0; font-size:17px; color:#475569;">
+        <p style="font-weight:800; color:#0f172a; font-size:18px; margin-bottom:4px;">National Bio-Support</p>
+        <p style="margin-bottom:14px; font-size:17px; color:#64748b; line-height:1.4;">Toll-free Kisan Helpline: <br><strong style="color:#16a34a; font-size:19px;">1800-419-AGRI</strong></p>
+        <a href="#sell-waste" style="display:block; text-align:center; background:#16a34a; color:white; padding:12px 16px; border-radius:10px; font-weight:800; font-size:18px; text-decoration:none; box-shadow:0 4px 10px rgba(22,163,74,0.25);">+ Add New Listing</a>
       </div>
     </aside>
   `;

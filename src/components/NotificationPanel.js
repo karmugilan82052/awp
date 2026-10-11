@@ -15,24 +15,24 @@ export function renderNotificationPanel() {
       <!-- Header -->
       <div style="padding:16px 20px; border-bottom:1.5px solid #f0f6f0; display:flex; justify-content:space-between; align-items:center; background:#f8fafc;">
         <div style="display:flex; align-items:center; gap:8px;">
-          <span style="font-size:18px;">🔔</span>
+          <span style="font-size:21px;">🔔</span>
           <div>
             <div style="display:flex; align-items:center; gap:8px;">
-              <h4 style="font-family:'Outfit', sans-serif; font-size:17px; font-weight:800; color:#0f172a; margin:0;">Notifications</h4>
+              <h4 style="font-family:'Outfit', sans-serif; font-size:20px; font-weight:800; color:#0f172a; margin:0;">Notifications</h4>
               ${
                 unreadCount > 0
-                  ? `<span style="background:#dc2626; color:white; font-size:11px; font-weight:800; padding:1px 7px; border-radius:10px;">${unreadCount} New</span>`
+                  ? `<span style="background:#dc2626; color:white; font-size:13px; font-weight:800; padding:1px 7px; border-radius:10px;">${unreadCount} New</span>`
                   : ""
               }
             </div>
-            <span style="font-size:12px; color:#64748b;">Live platform updates & alerts</span>
+            <span style="font-size:14px; color:#64748b;">Live platform updates & alerts</span>
           </div>
         </div>
         <div style="display:flex; align-items:center; gap:10px;">
-          <button id="btn-mark-all-read" style="background:none; border:none; color:#16a34a; font-size:12px; font-weight:700; cursor:pointer; padding:4px 6px;">
+          <button id="btn-mark-all-read" style="background:none; border:none; color:#16a34a; font-size:14px; font-weight:700; cursor:pointer; padding:4px 6px;">
             Mark all read
           </button>
-          <button id="btn-close-notif-panel" style="background:#f1f5f9; border:none; color:#64748b; font-size:14px; font-weight:800; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;" title="Close">
+          <button id="btn-close-notif-panel" style="background:#f1f5f9; border:none; color:#64748b; font-size:17px; font-weight:800; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;" title="Close">
             ✕
           </button>
         </div>
@@ -43,9 +43,9 @@ export function renderNotificationPanel() {
         ${
           notifications.length === 0
             ? `<div style="text-align:center; padding:40px 20px; color:#94a3b8;">
-                <span style="font-size:32px; display:block; margin-bottom:8px;">📭</span>
-                <p style="font-size:14px; font-weight:600; margin:0;">No new notifications</p>
-                <span style="font-size:12px;">You're all caught up!</span>
+                <span style="font-size:37px; display:block; margin-bottom:8px;">📭</span>
+                <p style="font-size:17px; font-weight:600; margin:0;">No new notifications</p>
+                <span style="font-size:14px;">You're all caught up!</span>
               </div>`
             : notifications
                 .map(
@@ -59,10 +59,10 @@ export function renderNotificationPanel() {
                   : ""
               }
               <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px; padding-left:${n.unread ? "8px" : "0"};">
-                <strong style="font-size:14px; color:#0f172a; font-weight:700;">${n.title}</strong>
-                <span style="font-size:11px; color:#94a3b8; white-space:nowrap; margin-left:8px;">${n.time}</span>
+                <strong style="font-size:17px; color:#0f172a; font-weight:700;">${n.title}</strong>
+                <span style="font-size:13px; color:#94a3b8; white-space:nowrap; margin-left:8px;">${n.time}</span>
               </div>
-              <p style="font-size:13px; color:#475569; line-height:1.45; margin:0; padding-left:${n.unread ? "8px" : "0"};">${n.message}</p>
+              <p style="font-size:15px; color:#475569; line-height:1.45; margin:0; padding-left:${n.unread ? "8px" : "0"};">${n.message}</p>
             </div>
           `
                 )
