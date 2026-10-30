@@ -59,6 +59,7 @@ export function renderNavbar(currentPath = "/") {
             <span style="font-size:18px;">✨</span> AI Assistant
           </button>
 
+
           ${
             isLoggedIn && currentUser
               ? `

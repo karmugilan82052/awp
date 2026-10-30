@@ -23,6 +23,7 @@ export function renderSidebar(activeTab = "overview", role = "farmer") {
     items = [
       { id: "overview", label: "Buyer Overview", icon: "📊", link: "#buyer-dashboard" },
       { id: "orders", label: "Active Orders", icon: "🚚", link: "#buyer-orders" },
+      { id: "esg", label: "ESG Compliance Hub", icon: "🌱", link: "#buyer-esg" },
       { id: "recommendations", label: "AI Recommendations", icon: "✨", link: "#buyer-recommendations" },
       { id: "favorites", label: "Saved Listings", icon: "⭐", link: "#buyer-saved" },
       { id: "chat", label: "Farmer Messages", icon: "💬", link: "#buyer-chat" },

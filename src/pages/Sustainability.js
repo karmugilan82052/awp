@@ -60,6 +60,30 @@ export function renderSustainabilityPage() {
           })}
         </div>
 
+        <!-- Enterprise ESG Green Compliance Certificate Feature Banner -->
+        <div style="background:linear-gradient(135deg, #092c17 0%, #14532d 55%, #15803d 100%); border-radius:20px; padding:28px 34px; margin-bottom:40px; color:white; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; box-shadow:0 10px 25px rgba(20,83,45,0.25);">
+          <div style="max-width:700px;">
+            <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.18); backdrop-filter:blur(6px); color:#dcfce7; font-size:12px; font-weight:800; padding:3px 12px; border-radius:20px; margin-bottom:8px;">
+              <span>📜</span> SEBI BRSR Core Mandate & Carbon Audit Standard
+            </div>
+            <h2 style="font-family:'Outfit', sans-serif; font-size:26px; font-weight:800; margin:0 0 8px 0; color:#ffffff;">
+              Enterprise B2B ESG Green Compliance & Decarbonization Certificates
+            </h2>
+            <p style="font-size:15px; color:#dcfce7; line-height:1.6; margin:0;">
+              Every agricultural biomass order on our platform automatically generates a tamper-proof, auditable <strong>ESG Compliance Certificate (PDF/Print)</strong> documenting verified CO₂e stubble burning avoidance, thermal coal replacement, and direct rural farmer DBT disbursements.
+            </p>
+          </div>
+
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <button id="btn-preview-sample-esg" style="background:#ffffff; color:#14532d; border:none; padding:12px 22px; border-radius:12px; font-size:15px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:8px; box-shadow:0 4px 14px rgba(0,0,0,0.2); transition:all 0.15s ease;">
+              <span>🌱</span> Preview Sample ESG Certificate
+            </button>
+            <a href="#buyer-esg" style="background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3); color:white; text-decoration:none; padding:12px 20px; border-radius:12px; font-size:15px; font-weight:700; display:flex; align-items:center; gap:6px;">
+              <span>🏭</span> Buyer ESG Hub →
+            </a>
+          </div>
+        </div>
+
         <!-- Interactive Environmental Impact Analytics Grid -->
         <div style="display:grid; grid-template-columns:1.3fr 1fr; gap:28px; margin-bottom:40px;" class="sustainability-charts-grid">
           

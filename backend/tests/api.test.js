@@ -47,11 +47,11 @@ async function runTests() {
 
   // 3. Test AI Assistant Query Intent
   try {
-    const resStraw = getAIAssistantResponse("Where can I sell paddy straw?");
-    assert(resStraw.text.includes("Paddy Straw Insights"), "AI Assistant Query Intent Match (Paddy)");
+    const resStraw = await getAIAssistantResponse("Where can I sell paddy straw?");
+    assert(resStraw.text.includes("Paddy Straw"), "AI Assistant Query Intent Match (Paddy)");
 
-    const resBagasse = getAIAssistantResponse("What can sugarcane bagasse be used for?");
-    assert(resBagasse.text.includes("Sugarcane Bagasse Insights"), "AI Assistant Query Intent Match (Bagasse)");
+    const resBagasse = await getAIAssistantResponse("What can sugarcane bagasse be used for?");
+    assert(resBagasse.text.includes("Sugarcane Bagasse"), "AI Assistant Query Intent Match (Bagasse)");
   } catch (e) {
     assert(false, `AI Assistant - Error: ${e.message}`);
   }

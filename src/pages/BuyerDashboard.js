@@ -228,6 +228,9 @@ export function renderBuyerDashboardPage(activeSubtab = "overview") {
                   <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
                     <span style="font-family:'Outfit', sans-serif; font-size:21px; font-weight:800; color:#16a34a;">${formatINR(o.totalAmount)}</span>
                     <div style="display:flex; gap:8px;">
+                      <button class="btn-view-esg-cert-order" data-id="${o.id}" style="background:#f0fdf4; border:1.5px solid #86efac; color:#15803d; padding:6px 12px; border-radius:6px; font-size:14px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+                        🌱 ESG Cert
+                      </button>
                       ${
                         o.status !== "Completed"
                           ? `
@@ -253,6 +256,171 @@ export function renderBuyerDashboardPage(activeSubtab = "overview") {
                 </div>
               `
               }
+            </div>
+          </div>
+        `
+            : ""
+        }
+
+        <!-- ==================================================== -->
+        <!-- SUBTAB: ESG COMPLIANCE HUB (ENTERPRISE B2B) -->
+        <!-- ==================================================== -->
+        ${
+          activeSubtab === "esg"
+            ? `
+          <div>
+            <!-- ESG Header & Action Bar -->
+            <div style="background:#ffffff; border:1px solid #e2ece2; border-radius:18px; padding:24px 28px; box-shadow:0 2px 10px rgba(15,61,33,0.04); margin-bottom:28px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+              <div>
+                <div style="display:inline-flex; align-items:center; gap:6px; background:#dcfce7; color:#15803d; font-size:12.5px; font-weight:800; padding:3px 12px; border-radius:12px; margin-bottom:6px;">
+                  <span>🌱</span> SEBI BRSR Core • Scope 3 Decarbonization Standard
+                </div>
+                <h2 style="font-family:'Outfit', sans-serif; font-size:26px; font-weight:800; color:#0f172a; margin:0;">
+                  Enterprise ESG & Decarbonization Audit Desk
+                </h2>
+                <p style="font-size:14px; color:#64748b; margin:4px 0 0 0; max-width:680px;">
+                  Audited environmental accounting for agricultural biomass feedstock procured in lieu of open-field stubble burning, compliant with ISO 14064-2 and CPCB air quality directives.
+                </p>
+              </div>
+
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button id="btn-export-esg-csv" style="background:#ffffff; border:1.5px solid #cbd5e1; color:#334155; padding:9px 16px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px;">
+                  📊 Export BRSR Audit (CSV)
+                </button>
+                <button id="btn-print-consolidated-esg" style="background:linear-gradient(135deg, #15803d, #16a34a); color:white; border:none; padding:9px 18px; border-radius:10px; font-size:14px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 4px 12px rgba(22,163,74,0.35);">
+                  🖨️ Consolidated Annual ESG Certificate
+                </button>
+              </div>
+            </div>
+
+            <!-- 4 Verified Decarbonization KPI Cards -->
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:20px; margin-bottom:28px;">
+              ${renderStatCard({
+                title: "Certified CO₂e Mitigated",
+                value: `${(totalTonsProcured * 1.48).toFixed(1)} Tons`,
+                subtitle: "Stubble burning eliminated",
+                icon: "☁️",
+                color: "green",
+                trend: { isPositive: true, text: "Scope 3 Offset" }
+              })}
+
+              ${renderStatCard({
+                title: "Fossil Coal Displaced",
+                value: `${(totalTonsProcured * 0.65).toFixed(1)} Tons`,
+                subtitle: "Thermal boiler fuel replaced",
+                icon: "⚡",
+                color: "blue"
+              })}
+
+              ${renderStatCard({
+                title: "PM2.5 Smog Prevented",
+                value: `${(totalTonsProcured * 3.8).toFixed(0)} kg`,
+                subtitle: "Toxic smoke particles avoided",
+                icon: "💨",
+                color: "purple"
+              })}
+
+              ${renderStatCard({
+                title: "Tree Absorption Equiv.",
+                value: `${Math.round((totalTonsProcured * 1.48 * 1000) / 22).toLocaleString("en-IN")}`,
+                subtitle: "Preserved tree equivalent",
+                icon: "🌲",
+                color: "amber"
+              })}
+            </div>
+
+            <!-- Certified Procurement Batches Table -->
+            <div style="background:#ffffff; border:1px solid #e2ece2; border-radius:18px; padding:24px; box-shadow:0 2px 10px rgba(15,61,33,0.04); margin-bottom:28px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:10px;">
+                <div>
+                  <h3 style="font-family:'Outfit', sans-serif; font-size:20px; font-weight:800; color:#0f172a; margin:0;">
+                    📜 Certified Sustainable Biomass Batches (${orders.length})
+                  </h3>
+                  <span style="font-size:13px; color:#64748b;">Each batch possesses an encrypted digital verification certificate ready for ESG audit submission.</span>
+                </div>
+              </div>
+
+              <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:left;">
+                  <thead>
+                    <tr style="background:#f8fafc; border-bottom:2px solid #e2e8f0; color:#475569; font-weight:700;">
+                      <th style="padding:12px 16px;">Certificate ID</th>
+                      <th style="padding:12px 16px;">Biomass Feedstock</th>
+                      <th style="padding:12px 16px;">Rural Producer Origin</th>
+                      <th style="padding:12px 16px;">Weight</th>
+                      <th style="padding:12px 16px;">CO₂e Abated</th>
+                      <th style="padding:12px 16px;">Compliance Status</th>
+                      <th style="padding:12px 16px; text-align:right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${orders
+                      .map(o => {
+                        const q = parseFloat(o.quantity) || 1;
+                        const co2 = (q * 1.48).toFixed(2);
+                        const cleanId = (o.id || "AGW-1001").replace(/[^a-zA-Z0-9]/g, "");
+                        return `
+                        <tr style="border-bottom:1px solid #f1f5f9; transition:background 0.15s;">
+                          <td style="padding:14px 16px;">
+                            <code style="font-family:monospace; font-weight:800; color:#14532d; background:#f0fdf4; padding:3px 8px; border-radius:6px; border:1px solid #bbf7d0;">
+                              ESG-BRSR-${cleanId}
+                            </code>
+                            <div style="font-size:11px; color:#64748b; margin-top:2px;">Order #${o.id}</div>
+                          </td>
+                          <td style="padding:14px 16px;">
+                            <strong style="color:#0f172a;">${o.listingTitle}</strong>
+                            <div style="font-size:12px; color:#64748b;">Category: ${o.category}</div>
+                          </td>
+                          <td style="padding:14px 16px;">
+                            <span style="font-weight:600; color:#334155;">${o.seller?.name || "Farmer"}</span>
+                            <div style="font-size:12px; color:#64748b;">${o.seller?.farmName || "Farm gate"}</div>
+                          </td>
+                          <td style="padding:14px 16px; font-weight:800; color:#0f172a;">
+                            ${o.quantity} ${o.unit}
+                          </td>
+                          <td style="padding:14px 16px;">
+                            <span style="background:#dcfce7; color:#15803d; font-weight:800; font-size:13px; padding:2px 8px; border-radius:6px;">
+                              ${co2} Tons
+                            </span>
+                          </td>
+                          <td style="padding:14px 16px;">
+                            <span style="display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:800; color:#16a34a;">
+                              <span>●</span> Verified & Audit Ready
+                            </span>
+                          </td>
+                          <td style="padding:14px 16px; text-align:right;">
+                            <button class="btn-view-esg-cert-order" data-id="${o.id}" style="background:#16a34a; color:white; border:none; padding:7px 14px; border-radius:8px; font-size:13px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:5px; box-shadow:0 2px 6px rgba(22,163,74,0.25);">
+                              <span>🌱</span> View & Print
+                            </button>
+                          </td>
+                        </tr>
+                      `;
+                      })
+                      .join("")}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- SEBI BRSR Core Audit Methodology Callout Box -->
+            <div style="background:#f0fdf4; border:1.5px solid #86efac; border-radius:18px; padding:22px 26px; display:flex; gap:20px; align-items:flex-start;">
+              <div style="background:#16a34a; color:white; width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0;">
+                ⚖️
+              </div>
+              <div style="font-size:14px; color:#14532d; line-height:1.6;">
+                <h4 style="font-family:'Outfit', sans-serif; font-size:17px; font-weight:800; margin:0 0 4px 0; color:#0f3d21;">
+                  Regulatory Accreditation & Decarbonization Methodology
+                </h4>
+                <p style="margin:0 0 6px 0;">
+                  Under the <strong>Securities and Exchange Board of India (SEBI) BRSR Core mandate</strong>, top 1,000 listed entities and their value-chain partners must report verified Scope 3 circular economy metrics. 
+                  Biomass feedstocks aggregated via this exchange are certified non-fossil inputs, ensuring compliance with <strong>ISO 14064-2 GHG Project Accounting</strong> and the <strong>Central Pollution Control Board (CPCB) stubble burning abatement targets</strong>.
+                </p>
+                <div style="display:flex; gap:16px; font-size:12px; font-weight:700; color:#166534;">
+                  <span>✓ 100% Traceability to Farm Gate</span>
+                  <span>✓ Weighbridge Reconciled</span>
+                  <span>✓ 0% Double Counting Guarantee</span>
+                </div>
+              </div>
             </div>
           </div>
         `

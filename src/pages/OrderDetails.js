@@ -43,6 +43,9 @@ export function renderOrderDetailsPage(orderId) {
               </p>
             </div>
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button id="btn-view-esg-certificate" data-id="${order.id}" style="background:#f0fdf4; border:1.5px solid #86efac; color:#15803d; padding:9px 16px; border-radius:8px; font-size:15px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(22,163,74,0.15); transition:all 0.15s ease;">
+                🌱 ESG Green Certificate
+              </button>
               <button id="btn-print-tax-invoice" data-id="${order.id}" style="background:#ffffff; border:1px solid #cbd5e1; color:#334155; padding:9px 16px; border-radius:8px; font-size:15px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px;">
                 🖨️ Print Tax Invoice
               </button>
@@ -96,6 +99,34 @@ export function renderOrderDetailsPage(orderId) {
               </div>
             </div>
 
+            <!-- ESG Environmental Decarbonization Callout Card -->
+            <div style="background:linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border:1.5px solid #86efac; border-radius:16px; padding:18px 20px; margin-bottom:20px; box-shadow:0 2px 8px rgba(22,163,74,0.08);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="font-size:20px;">🌱</span>
+                  <strong style="font-size:15px; color:#14532d;">Certified Stubble Burning Mitigation (SEBI BRSR Scope 3)</strong>
+                </div>
+                <button class="btn-view-esg-cert-inline" data-id="${order.id}" style="background:#16a34a; color:white; border:none; padding:4px 12px; border-radius:6px; font-size:13px; font-weight:800; cursor:pointer;">
+                  View Full Certificate →
+                </button>
+              </div>
+
+              <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; font-size:13px;">
+                <div style="background:white; border:1px solid #bbf7d0; border-radius:10px; padding:10px; text-align:center;">
+                  <strong style="font-size:18px; color:#15803d; display:block;">${(order.quantity * 1.48).toFixed(2)} Tons</strong>
+                  <span style="color:#4b6354; font-size:11.5px;">CO₂e Emissions Prevented</span>
+                </div>
+                <div style="background:white; border:1px solid #bbf7d0; border-radius:10px; padding:10px; text-align:center;">
+                  <strong style="font-size:18px; color:#0284c7; display:block;">${(order.quantity * 0.65).toFixed(2)} Tons</strong>
+                  <span style="color:#4b6354; font-size:11.5px;">Thermal Coal Replaced</span>
+                </div>
+                <div style="background:white; border:1px solid #bbf7d0; border-radius:10px; padding:10px; text-align:center;">
+                  <strong style="font-size:18px; color:#9333ea; display:block;">${Math.round((order.quantity * 1.48 * 1000) / 22)}</strong>
+                  <span style="color:#4b6354; font-size:11.5px;">Trees Sequestration Equiv.</span>
+                </div>
+              </div>
+            </div>
+
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
               <div style="background:#ffffff; border:1px solid #e2ece2; border-radius:16px; padding:18px;">
                 <span style="font-size:13px; font-weight:800; color:#64748b; text-transform:uppercase;">Seller / Producer</span>
@@ -142,6 +173,10 @@ export function renderOrderDetailsPage(orderId) {
                 <div style="margin-bottom:4px; color:#334155;"><strong>Payment Method:</strong> ${order.paymentMethod}</div>
                 <div style="margin-bottom:4px; color:#334155;"><strong>Payment Status:</strong> <span style="color:#16a34a; font-weight:700;">${order.paymentStatus}</span></div>
                 <div style="color:#334155;"><strong>Razorpay Ref ID:</strong> <code style="background:#e2ece2; padding:2px 6px; border-radius:4px; font-weight:700; color:#0f3d21;">${order.transactionId}</code></div>
+                
+                <button class="btn-download-pdf-receipt" data-id="${order.id}" style="width:100%; margin-top:12px; background:#16a34a; color:white; border:none; padding:10px; border-radius:8px; font-size:13.5px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 2px 6px rgba(22,163,74,0.25);">
+                  📄 Download Payment Receipt (PDF)
+                </button>
               </div>
 
               <!-- Buyer Review Action Trigger if Completed -->

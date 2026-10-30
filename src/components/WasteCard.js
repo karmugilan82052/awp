@@ -71,43 +71,49 @@ export function renderWasteCard(listing, isListView = false) {
       <div style="padding:16px; display:flex; flex-direction:column; flex-grow:1;">
         
         <!-- Location & Moisture Subtitle -->
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:14px; color:#64748b; margin-bottom:6px;">
-          <span>${listing.district || "District"}, ${listing.state || "State"}</span>
-          <span>Moisture: <strong style="color:#0f172a;">${listing.moisture || "12%"}</strong></span>
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:13px; color:#64748b; margin-bottom:8px;">
+          <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:62%; display:inline-flex; align-items:center; gap:3px;" title="${listing.district || "District"}, ${listing.state || "State"}">
+            <span style="font-size:12px;">📍</span> ${listing.district || "District"}, ${listing.state || "State"}
+          </span>
+          <span style="flex-shrink:0; background:#f1f5f9; padding:2px 8px; border-radius:6px; font-size:12px; font-weight:600; color:#475569;">
+            Moisture: <strong style="color:#0f172a;">${listing.moisture || "12%"}</strong>
+          </span>
         </div>
 
         <!-- Title -->
-        <h3 style="font-family:'Outfit', sans-serif; font-size:19px; font-weight:700; color:#0f172a; line-height:1.3; margin-bottom:10px; height:42px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">
+        <h3 style="font-family:'Outfit', sans-serif; font-size:18px; font-weight:700; color:#0f172a; line-height:1.38; margin-bottom:10px; min-height:50px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;" title="${listing.title}">
           <a href="#waste/${listing.id}" style="color:inherit; text-decoration:none;">${listing.title}</a>
         </h3>
 
         <!-- Seller Info -->
-        <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px; font-size:14px; color:#475569;">
-          <div style="width:22px; height:22px; border-radius:50%; background:#dcfce7; color:#15803d; font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px; font-size:13px; color:#475569;">
+          <div style="width:26px; height:26px; border-radius:50%; background:#dcfce7; color:#15803d; font-weight:800; font-size:11px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
             ${listing.seller?.avatar || "S"}
           </div>
-          <span style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:130px;">${listing.seller?.name || "Farmer"}</span>
-          <span style="color:#eab308; font-weight:700;">★ ${listing.seller?.rating || 4.8}</span>
+          <span style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:130px; color:#334155;">${listing.seller?.name || "Farmer"}</span>
+          <span style="color:#d97706; font-weight:700; margin-left:auto; display:inline-flex; align-items:center; gap:3px; flex-shrink:0; font-size:13px;">
+            ★ ${listing.seller?.rating || 4.8}
+          </span>
         </div>
 
         <!-- Price & Quantity Specs -->
         <div style="background:#f8fafc; padding:10px 12px; border-radius:10px; border:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
           <div>
-            <span style="font-size:13px; color:#64748b; display:block;">Price per Ton</span>
-            <span style="font-family:'Outfit', sans-serif; font-size:21px; font-weight:800; color:#16a34a;">${formatINR(listing.price)}</span>
+            <span style="font-size:12px; color:#64748b; display:block; font-weight:500;">Price per Ton</span>
+            <span style="font-family:'Outfit', sans-serif; font-size:21px; font-weight:800; color:#16a34a; letter-spacing:-0.2px;">${formatINR(listing.price)}</span>
           </div>
           <div style="text-align:right;">
-            <span style="font-size:13px; color:#64748b; display:block;">Available Qty</span>
-            <span style="font-size:17px; font-weight:700; color:#0f172a;">${listing.quantity} ${listing.unit}</span>
+            <span style="font-size:12px; color:#64748b; display:block; font-weight:500;">Available Qty</span>
+            <span style="font-size:16px; font-weight:700; color:#0f172a;">${listing.quantity} ${listing.unit}</span>
           </div>
         </div>
 
         <!-- Action Buttons -->
         <div style="display:flex; gap:8px; margin-top:auto;">
-          <button class="btn-quick-add-cart" data-id="${listing.id}" title="Quick Add to Cart" style="background:#f1f5f9; border:1px solid #cbd5e1; padding:9px 12px; border-radius:8px; cursor:pointer; font-weight:700; font-size:17px; flex-shrink:0;">
+          <button class="btn-quick-add-cart" data-id="${listing.id}" title="Quick Add to Cart" style="background:#f1f5f9; border:1px solid #cbd5e1; padding:9px 12px; border-radius:8px; cursor:pointer; font-weight:700; font-size:16px; flex-shrink:0; transition:all 0.15s ease;">
             🛒
           </button>
-          <a href="#waste/${listing.id}" style="background:#16a34a; color:white; padding:9px 14px; border-radius:8px; font-size:15px; font-weight:700; text-align:center; text-decoration:none; flex-grow:1;">
+          <a href="#waste/${listing.id}" style="background:#16a34a; color:white; padding:9px 14px; border-radius:8px; font-size:15px; font-weight:700; text-align:center; text-decoration:none; flex-grow:1; display:flex; align-items:center; justify-content:center; transition:background 0.15s ease;">
             View Details
           </a>
         </div>

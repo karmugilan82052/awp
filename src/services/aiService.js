@@ -10,6 +10,7 @@ const AUTO_GEMINI_KEY = "gemini-auto-key-active-2026";
 
 // Gemini Configuration Helpers
 export function getGeminiApiKey() {
+  if (typeof localStorage === "undefined") return AUTO_GEMINI_KEY;
   const stored = localStorage.getItem("GEMINI_API_KEY");
   if (stored) return stored;
   // Auto-install default key if none is present
@@ -18,6 +19,7 @@ export function getGeminiApiKey() {
 }
 
 export function setGeminiApiKey(key) {
+  if (typeof localStorage === "undefined") return;
   if (key && key.trim()) {
     localStorage.setItem("GEMINI_API_KEY", key.trim());
   } else {
@@ -27,10 +29,12 @@ export function setGeminiApiKey(key) {
 }
 
 export function getGeminiModel() {
+  if (typeof localStorage === "undefined") return "gemini-2.0-flash";
   return localStorage.getItem("GEMINI_MODEL") || "gemini-2.0-flash";
 }
 
 export function setGeminiModel(model) {
+  if (typeof localStorage === "undefined") return;
   localStorage.setItem("GEMINI_MODEL", model);
 }
 

@@ -110,9 +110,14 @@ export function renderOrdersPage(searchParams = {}) {
                   <span style="font-family:'Outfit', sans-serif; font-size:25px; font-weight:800; color:#16a34a;">
                     ${formatINR(order.totalAmount)}
                   </span>
-                  <a href="#orders/${order.id}" style="background:#16a34a; color:white; padding:8px 18px; border-radius:8px; font-size:15px; font-weight:700; text-decoration:none; display:inline-block;">
-                    Track & Manage Order →
-                  </a>
+                  <div style="display:flex; gap:8px; align-items:center;">
+                    <button class="btn-download-pdf-receipt" data-id="${order.id}" style="background:#f0fdf4; border:1px solid #86efac; color:#15803d; padding:8px 12px; border-radius:8px; font-size:13.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px; transition:all 0.15s ease;" title="Download Payment Receipt & Tax Invoice PDF">
+                      📄 Payment PDF
+                    </button>
+                    <a href="#orders/${order.id}" style="background:#16a34a; color:white; padding:8px 18px; border-radius:8px; font-size:14px; font-weight:700; text-decoration:none; display:inline-block;">
+                      Track & Manage →
+                    </a>
+                  </div>
                 </div>
 
               </div>

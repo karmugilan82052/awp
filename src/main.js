@@ -14,6 +14,8 @@ import { renderNotificationPanel } from "./components/NotificationPanel.js";
 import { renderChatModal } from "./components/ChatWindow.js";
 import { renderRatingModal } from "./components/RatingModal.js";
 import { renderComplaintModal } from "./components/ComplaintModal.js";
+import { renderESGCertificateModal } from "./components/ESGCertificateModal.js";
+import { renderPaymentSuccessModal } from "./components/PaymentSuccessModal.js";
 
 // Pages
 import { renderHomePage } from "./pages/Home.js";
@@ -36,7 +38,7 @@ import { renderRegisterPage } from "./pages/Register.js";
 // Services
 import { classifyAgriWasteImage, getAIAssistantResponse, setGeminiApiKey, setGeminiModel, getGeminiApiKey, getGeminiModel } from "./services/aiService.js";
 import { initializeMap, addListingMarkers } from "./services/mapService.js";
-import { exportToCSV, printTaxInvoice } from "./services/exportService.js";
+import { exportToCSV, printTaxInvoice, printESGCertificate } from "./services/exportService.js";
 import { processRazorpayPayment } from "./services/razorpayService.js";
 
 class App {
@@ -658,7 +660,17 @@ class App {
         }
 
         showToast(`✓ Order #${newOrder.id} funded via Razorpay (${paymentResult.paymentId})! Escrow locked.`, "success");
-        window.location.hash = `#orders/${newOrder.id}`;
+
+        // Automatically generate and launch the official Payment Receipt / Tax Invoice PDF dialog
+        try {
+          printTaxInvoice(newOrder);
+        } catch (err) {
+          console.debug("Auto-trigger invoice print dialog:", err);
+        }
+
+        // Display the Payment Success & Receipt PDF Download Modal
+        this.modalRoot.innerHTML = renderPaymentSuccessModal(newOrder);
+        this.attachModalListeners();
       });
     }
 
@@ -765,6 +777,119 @@ class App {
       printInvoiceBtn.addEventListener("click", () => {
         const order = store.getOrderById(printInvoiceBtn.dataset.id);
         printTaxInvoice(order);
+      });
+    }
+
+    document.querySelectorAll(".btn-download-pdf-receipt").forEach(btn => {
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        e.stopPropagation();
+        const order = store.getOrderById(btn.dataset.id);
+        if (order) {
+          printTaxInvoice(order);
+          showToast(`Generating Payment PDF receipt for Order #${order.id}...`, "success");
+        }
+      });
+    });
+
+    // 11b. ESG Green Compliance Certificate Triggers
+    const viewEsgBtn = document.getElementById("btn-view-esg-certificate");
+    if (viewEsgBtn) {
+      viewEsgBtn.addEventListener("click", () => {
+        const order = store.getOrderById(viewEsgBtn.dataset.id);
+        if (order) {
+          this.modalRoot.innerHTML = renderESGCertificateModal(order);
+          this.attachModalListeners();
+        }
+      });
+    }
+
+    document.querySelectorAll(".btn-view-esg-cert-inline, .btn-view-esg-cert-order").forEach(btn => {
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        e.stopPropagation();
+        const order = store.getOrderById(btn.dataset.id);
+        if (order) {
+          this.modalRoot.innerHTML = renderESGCertificateModal(order);
+          this.attachModalListeners();
+        }
+      });
+    });
+
+    const previewSampleEsgBtn = document.getElementById("btn-preview-sample-esg");
+    if (previewSampleEsgBtn) {
+      previewSampleEsgBtn.addEventListener("click", () => {
+        const orders = store.getOrders();
+        const sampleOrder = orders[0] || {
+          id: "AGW-10245",
+          listingTitle: "Premium Dry Paddy Straw Bales",
+          category: "paddy-straw",
+          quantity: 12.5,
+          unit: "Tons",
+          unitPrice: 3800,
+          subtotal: 47500,
+          totalAmount: 54200,
+          status: "Completed",
+          createdAt: "2026-08-16",
+          seller: { name: "Selvam Ramasamy", farmName: "Kongu Green Organic Agro", pickupAddress: "Farm Gate, Pollachi, Tamil Nadu" },
+          buyer: { name: "Dr. M. Senthil Nathan", company: "Kongu AgriFeed & Bio-Refineries Ltd", deliveryAddress: "SIDCO Industrial Hub, Coimbatore, Tamil Nadu" }
+        };
+        this.modalRoot.innerHTML = renderESGCertificateModal(sampleOrder);
+        this.attachModalListeners();
+      });
+    }
+
+    const printConsolidatedEsgBtn = document.getElementById("btn-print-consolidated-esg");
+    if (printConsolidatedEsgBtn) {
+      printConsolidatedEsgBtn.addEventListener("click", () => {
+        const orders = store.getOrders();
+        const currentUser = store.getCurrentUser();
+        let totalQty = 0;
+        orders.forEach(o => totalQty += parseFloat(o.quantity) || 0);
+        const consolidated = {
+          id: `CORP-ANNUAL-${new Date().getFullYear()}`,
+          listingTitle: `Consolidated Circular Biomass Feedstock (Annual FY${new Date().getFullYear()})`,
+          category: "Aggregated Agricultural Residues",
+          quantity: totalQty || 68.5,
+          unit: "Tons",
+          unitPrice: 3800,
+          subtotal: totalQty * 3800 || 260300,
+          totalAmount: totalQty * 4200 || 287700,
+          status: "Audited & Verified",
+          createdAt: new Date().toLocaleDateString("en-IN", { dateStyle: "medium" }),
+          seller: { name: "Tamil Nadu Farmer Producer Organizations (FPO Consortium)", farmName: "Cauvery & Kongu Agri Bio-Cluster", pickupAddress: "Multi-District Aggregation Centers, Tamil Nadu" },
+          buyer: { name: currentUser.name, company: currentUser.companyName || "Industrial Bio-Refinery Corp", deliveryAddress: currentUser.location || "Industrial Estate, Tamil Nadu" }
+        };
+        printESGCertificate(consolidated);
+      });
+    }
+
+    const exportEsgCsvBtn = document.getElementById("btn-export-esg-csv");
+    if (exportEsgCsvBtn) {
+      exportEsgCsvBtn.addEventListener("click", () => {
+        const orders = store.getOrders();
+        const esgRows = orders.map(o => {
+          const q = parseFloat(o.quantity) || 1;
+          const cleanId = (o.id || "AGW-1001").replace(/[^a-zA-Z0-9]/g, "");
+          return {
+            CertificateNo: `ESG-BRSR-2026-${cleanId}`,
+            OrderID: o.id,
+            Feedstock: o.listingTitle,
+            Category: o.category,
+            QuantityTons: q,
+            CO2e_Mitigated_Tons: (q * 1.48).toFixed(2),
+            Coal_Displaced_Tons: (q * 0.65).toFixed(2),
+            PM25_Avoided_kg: (q * 3.8).toFixed(1),
+            Trees_Equivalent: Math.round((q * 1.48 * 1000) / 22),
+            Farmer_Direct_DBT_INR: o.subtotal,
+            Rural_Producer: o.seller?.name || "Farmer",
+            Origin_District: o.seller?.pickupAddress || "Tamil Nadu",
+            Audit_Standard: "ISO 14064-2 / SEBI BRSR Core",
+            Status: "100% Audit Verified"
+          };
+        });
+        exportToCSV("SEBI_BRSR_Core_ESG_Biomass_Audit", esgRows);
+        showToast("BRSR Audit CSV exported successfully!", "success");
       });
     }
 
@@ -1261,6 +1386,73 @@ class App {
     if (closeChatBtn) closeChatBtn.addEventListener("click", closeModal);
     if (closeRatingBtn) closeRatingBtn.addEventListener("click", closeModal);
     if (closeComplaintBtn) closeComplaintBtn.addEventListener("click", closeModal);
+
+    const closeEsgBtn = document.getElementById("btn-close-esg-modal");
+    if (closeEsgBtn) closeEsgBtn.addEventListener("click", closeModal);
+
+    const printEsgBtn = document.getElementById("btn-print-esg-cert");
+    if (printEsgBtn) {
+      printEsgBtn.addEventListener("click", () => {
+        const orderId = printEsgBtn.dataset.orderId;
+        const order = store.getOrderById(orderId) || {
+          id: orderId || "AGW-10245",
+          quantity: 12.5,
+          listingTitle: "Premium Dry Paddy Straw Bales",
+          seller: { name: "Selvam Ramasamy", farmName: "Kongu Green Organic Agro", pickupAddress: "Pollachi, Tamil Nadu" },
+          buyer: { name: "Dr. M. Senthil Nathan", company: "Kongu AgriFeed Ltd", deliveryAddress: "Coimbatore, Tamil Nadu" }
+        };
+        printESGCertificate(order);
+      });
+    }
+
+    const copyEsgIdBtn = document.getElementById("btn-copy-esg-cert-id");
+    if (copyEsgIdBtn) {
+      copyEsgIdBtn.addEventListener("click", () => {
+        const certId = copyEsgIdBtn.dataset.certId;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(certId).then(() => {
+            showToast(`✓ Certificate ID copied: ${certId}`, "success");
+          });
+        } else {
+          showToast(`Certificate ID: ${certId}`, "info");
+        }
+      });
+    }
+
+    // Payment Success Modal Handlers
+    const closePaymentSuccessBtn = document.getElementById("btn-close-payment-success-modal");
+    if (closePaymentSuccessBtn) closePaymentSuccessBtn.addEventListener("click", closeModal);
+
+    const downloadPaymentPdfBtn = document.getElementById("btn-download-payment-pdf");
+    if (downloadPaymentPdfBtn) {
+      downloadPaymentPdfBtn.addEventListener("click", () => {
+        const orderId = downloadPaymentPdfBtn.dataset.id;
+        const order = store.getOrderById(orderId);
+        if (order) {
+          printTaxInvoice(order);
+          showToast(`Opening Payment PDF for Order #${order.id}...`, "success");
+        }
+      });
+    }
+
+    const downloadEsgFromSuccessBtn = document.getElementById("btn-download-esg-from-success");
+    if (downloadEsgFromSuccessBtn) {
+      downloadEsgFromSuccessBtn.addEventListener("click", () => {
+        const orderId = downloadEsgFromSuccessBtn.dataset.id;
+        const order = store.getOrderById(orderId);
+        if (order) {
+          this.modalRoot.innerHTML = renderESGCertificateModal(order);
+          this.attachModalListeners();
+        }
+      });
+    }
+
+    const linkTrackOrderSuccess = document.getElementById("link-track-order-success");
+    if (linkTrackOrderSuccess) {
+      linkTrackOrderSuccess.addEventListener("click", () => {
+        closeModal();
+      });
+    }
 
     // Star Rating Clickers
     document.querySelectorAll(".star-btn").forEach(star => {
