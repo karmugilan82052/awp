@@ -1,20 +1,19 @@
 {
-  "name": "agriwaste-marketplace",
-  "private": true,
+  "name": "agriwaste-platform",
   "version": "1.0.0",
-  "type": "module",
+  "private": true,
+  "description": "Smart AgriWaste Circular Bio-Exchange Marketplace - Fullstack Architecture",
   "scripts": {
-    "dev": "vite --host --port 5173",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "npm --prefix frontend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "build": "npm --prefix frontend run build",
+    "preview": "npm --prefix frontend run preview",
+    "test": "npm --prefix backend run test",
+    "install:all": "npm install --prefix frontend && npm install --prefix backend"
   },
-  "dependencies": {
-    "canvas-confetti": "^1.9.4",
-    "chart.js": "^4.4.8",
-    "leaflet": "^1.9.4",
-    "lucide": "^0.475.0"
-  },
-  "devDependencies": {
-    "vite": "^6.2.0"
-  }
+  "workspaces": [
+    "frontend",
+    "backend"
+  ]
 }

@@ -133,6 +133,81 @@ Output:
 
 ---
 
+## 🏗️ Repository Architecture
+
+The project is structured into independent, production-ready modules:
+
+```text
+awt/
+├── frontend/               # Vite Single Page Application (Client)
+│   ├── public/             # Static public assets & images
+│   ├── src/                # Modular UI components, pages, stores & services
+│   ├── index.html          # HTML5 SPA entry point
+│   ├── vite.config.js      # Vite build configuration
+│   ├── vercel.json         # Vercel SPA routing rules
+│   ├── .env.example        # Frontend environment variables template
+│   └── package.json        # Frontend dependencies & scripts
+├── backend/                # Node.js Express REST API Server
+│   ├── src/
+│   │   ├── data/           # Seed data and mock database store
+│   │   ├── middleware/     # JWT authentication & RBAC middleware
+│   │   ├── models/         # Data models and schemas
+│   │   ├── services/       # AI classification & Recommendation engine
+│   │   ├── utils/          # Distance, pricing, and formatting helpers
+│   │   └── server.js       # Express REST API server
+│   ├── tests/              # Automated backend test suite
+│   ├── .env.example        # Backend environment variables template
+│   └── package.json        # Backend dependencies & test scripts
+├── docs/                   # Complete architectural & deployment documentation
+├── package.json            # Root workspace scripts (dev, build, test)
+└── vercel.json             # Root Vercel build orchestration
+```
+
+---
+
+## 🚀 Quick Start Guide
+
+### 1. Install All Dependencies
+From the repository root:
+```bash
+npm run install:all
+```
+
+### 2. Start Applications
+- **Start Frontend (Vite on http://localhost:5180)**:
+  ```bash
+  npm run dev
+  # or
+  npm run dev:frontend
+  ```
+- **Start Backend API (Express on http://localhost:5000)**:
+  ```bash
+  npm run dev:backend
+  ```
+
+### 3. Run Backend Test Suite
+```bash
+npm run test
+```
+
+### 4. Build Frontend for Production
+```bash
+npm run build
+```
+
+---
+
+## 🌐 Deployment
+
+### Vercel Deployment (Frontend)
+- **Option 1 (Root Deployment)**: Deploy the root repository directly. The root `vercel.json` automatically triggers `cd frontend && npm install` and `cd frontend && npm run build` and serves `frontend/dist`.
+- **Option 2 (Directory Deployment)**: In the Vercel project settings, select **`frontend`** as the **Root Directory**.
+
+### Backend API Deployment
+Deploy the `backend` directory to **Render**, **Railway**, or **AWS/DigitalOcean** using `npm start` (points to `backend/src/server.js`).
+
+---
+
 ## 📚 Documentation Index
 
 - [Project Overview](docs/PROJECT_OVERVIEW.md)

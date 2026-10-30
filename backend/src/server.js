@@ -13,9 +13,9 @@ import {
   INITIAL_REVIEWS,
   INITIAL_COMPLAINTS,
   SUSTAINABILITY_METRICS
-} from "../../src/store/initialData.js";
-import { classifyAgriWasteImage, getAIAssistantResponse } from "../../src/services/aiService.js";
-import { getRecommendedBuyersForListing } from "../../src/services/recommendationEngine.js";
+} from "./data/initialData.js";
+import { classifyAgriWasteImage, getAIAssistantResponse } from "./services/aiService.js";
+import { getRecommendedBuyersForListing } from "./services/recommendationEngine.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;

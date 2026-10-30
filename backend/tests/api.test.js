@@ -3,10 +3,10 @@
  */
 
 import { generateToken } from "../src/middleware/auth.js";
-import { classifyAgriWasteImage, getAIAssistantResponse } from "../../src/services/aiService.js";
-import { getRecommendedBuyersForListing } from "../../src/services/recommendationEngine.js";
-import { calculateDistanceKm } from "../../src/utils/helpers.js";
-import { INITIAL_LISTINGS } from "../../src/store/initialData.js";
+import { classifyAgriWasteImage, getAIAssistantResponse } from "../src/services/aiService.js";
+import { getRecommendedBuyersForListing } from "../src/services/recommendationEngine.js";
+import { calculateDistanceKm } from "../src/utils/helpers.js";
+import { INITIAL_LISTINGS } from "../src/data/initialData.js";
 
 async function runTests() {
   console.log("=========================================");
